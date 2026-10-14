@@ -440,13 +440,15 @@
       .subscribe();
   }
 
-  function renderMessage(m) {
+   function renderMessage(m) {
     const box = document.getElementById("messages");
     const div = document.createElement("div");
     div.className = "msg " + (m.user_id === currentUser.id ? "mine" : "theirs");
     const sender = profilesMap[m.user_id]?.display_name || m.username;
-    if (m.type === "sticker") {
-      div.innerHTML = `<small>${escapeHtml(sender)}</small><div class="sticker">${m.content}</div>`;
+    // اگر محتوا فقط شامل اموجی/استیکر بود (بدون متن)، بزرگ نشان بده
+    const onlyEmoji = /^[\p{Emoji}\s]+$/u.test(m.content) && m.content.length <= 8;
+    if (onlyEmoji) {
+      div.innerHTML = `<small>${escapeHtml(sender)}</small><div class="sticker">${escapeHtml(m.content)}</div>`;
     } else {
       div.innerHTML = `<small>${escapeHtml(sender)}</small>${escapeHtml(m.content)}`;
     }
