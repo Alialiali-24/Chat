@@ -4,147 +4,295 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>چت دو نفره</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel2: #334155;
+    --accent: #6366f1; --accent2: #8b5cf6;
+    --mine: #4f46e5; --theirs: #334155;
+    --text: #f1f5f9; --muted: #94a3b8;
+    --danger: #ef4444; --success: #10b981; --warn: #f59e0b;
+  }
   body {
-    margin: 0;
-    font-family: Tahoma, sans-serif;
-    background: #f0f2f5;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    color: var(--text); height: 100vh; overflow: hidden; font-size: 14px;
   }
+  .login-wrap { display: flex; align-items: center; justify-content: center; height: 100vh; }
   .login-box {
-    width: 340px;
-    background: #fff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    width: 360px; max-width: 92vw; background: var(--panel);
+    padding: 32px 26px; border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    border: 1px solid rgba(255,255,255,.06);
   }
-  .login-box h2 { text-align: center; margin-top: 0; }
-  .login-box input, .login-box button {
-    width: 100%;
-    padding: 10px;
-    margin: 6px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-family: inherit;
-    font-size: 14px;
+  .login-box h2 { text-align: center; margin-bottom: 22px; font-weight: 700; }
+  .login-box .logo {
+    text-align: center; font-size: 42px; margin-bottom: 8px;
+    filter: drop-shadow(0 0 20px var(--accent));
   }
+  .login-box input {
+    width: 100%; padding: 12px 14px; margin: 6px 0; border-radius: 10px;
+    border: 1px solid var(--panel2); background: var(--bg);
+    color: var(--text); font-family: inherit; font-size: 14px;
+  }
+  .login-box input:focus { outline: none; border-color: var(--accent); }
   .login-box button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
+    width: 100%; padding: 12px; margin-top: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; border: none; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 15px; font-weight: 700; transition: .2s;
   }
-  .login-box button:hover { background: #0069d9; }
-  .error { color: #d33; font-size: 13px; text-align: center; min-height: 18px; }
+  .login-box button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(99,102,241,.4); }
+  .error { color: var(--danger); font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; }
+  .info-msg { color: var(--success); font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; }
 
-  .chat-container {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    max-width: 600px;
-    height: 100vh;
-    background: #fff;
-  }
-  .chat-container.active { display: flex; }
+  .app { display: none; height: 100vh; }
+  .app.active { display: flex; }
 
-  header {
-    background: #007bff;
-    color: #fff;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
+  .sidebar {
+    width: 260px; background: var(--panel); display: flex; flex-direction: column;
+    border-left: 1px solid rgba(255,255,255,.05);
   }
-  header button {
-    background: #ff4444;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: inherit;
+  .sidebar-header {
+    padding: 16px; border-bottom: 1px solid rgba(255,255,255,.05);
+    display: flex; align-items: center; gap: 10px;
   }
-  .messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px;
-    background: #e5ddd5;
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; flex-shrink: 0;
   }
+  .sidebar-header .info { flex: 1; overflow: hidden; }
+  .sidebar-header .info b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-header .info small { color: var(--muted); font-size: 11px; }
+  .users-title { padding: 12px 16px 6px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .5px; }
+  .users-list { flex: 1; overflow-y: auto; padding: 4px 8px; }
+  .user-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border-radius: 10px; margin-bottom: 2px; transition: .15s;
+  }
+  .user-item:hover { background: var(--panel2); }
+  .user-item .avatar { width: 34px; height: 34px; font-size: 13px; }
+  .user-item .name { flex: 1; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-item .badge { font-size: 10px; padding: 2px 6px; border-radius: 6px; background: var(--accent); color: #fff; }
+  .user-item .badge.admin { background: var(--danger); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .dot.online { background: var(--success); box-shadow: 0 0 8px var(--success); }
+
+  .sidebar-footer { padding: 10px; border-top: 1px solid rgba(255,255,255,.05); }
+  .sidebar-footer button {
+    width: 100%; padding: 9px; border-radius: 8px; background: var(--panel2);
+    color: var(--text); border: none; cursor: pointer; font-family: inherit;
+    font-size: 13px; transition: .2s; margin-bottom: 6px;
+  }
+  .sidebar-footer button:hover { background: #475569; }
+  .sidebar-footer button.danger { background: var(--danger); }
+  .sidebar-footer button.danger:hover { background: #dc2626; }
+
+  .chat { flex: 1; display: flex; flex-direction: column; background: var(--bg); position: relative; }
+  .chat-header {
+    padding: 14px 20px; background: var(--panel);
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+  .chat-header b { font-size: 15px; }
+  .messages { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
   .msg {
-    margin: 8px 0;
-    padding: 8px 12px;
-    border-radius: 10px;
-    max-width: 75%;
-    word-wrap: break-word;
-    font-size: 14px;
-    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    max-width: 70%; padding: 10px 14px; border-radius: 16px;
+    font-size: 14px; line-height: 1.5; word-wrap: break-word; animation: fadeIn .2s ease;
   }
-  .msg.mine { background: #dcf8c6; margin-right: auto; margin-left: 0; }
-  .msg.theirs { background: #fff; margin-left: auto; margin-right: 0; }
-  .msg small { display: block; font-size: 10px; color: #666; margin-bottom: 2px; }
-  .msg p { margin: 0; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .msg.mine { background: var(--mine); align-self: flex-start; border-bottom-right-radius: 4px; }
+  .msg.theirs { background: var(--theirs); align-self: flex-end; border-bottom-left-radius: 4px; }
+  .msg small { display: block; font-size: 10px; opacity: .75; margin-bottom: 3px; }
+  .msg .sticker { font-size: 42px; line-height: 1; }
 
   .input-row {
-    display: flex;
-    padding: 8px;
-    border-top: 1px solid #ddd;
-    background: #f7f7f7;
+    display: flex; padding: 12px 16px; gap: 8px;
+    background: var(--panel); border-top: 1px solid rgba(255,255,255,.05);
+    align-items: center;
   }
+  .sticker-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel2); border: none; cursor: pointer;
+    font-size: 20px; color: var(--text); transition: .2s; flex-shrink: 0;
+  }
+  .sticker-btn:hover { background: var(--accent); }
   .input-row input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
+    flex: 1; padding: 11px 14px; border-radius: 24px;
+    border: 1px solid var(--panel2); background: var(--bg);
+    color: var(--text); font-family: inherit; font-size: 14px;
   }
-  .input-row button {
-    margin-right: 8px;
-    padding: 10px 18px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: bold;
+  .input-row input:focus { outline: none; border-color: var(--accent); }
+  .send-btn {
+    padding: 11px 22px; border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; border: none; cursor: pointer;
+    font-family: inherit; font-weight: 700; font-size: 14px; transition: .2s;
   }
-  .input-row button:hover { background: #0069d9; }
+  .send-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99,102,241,.4); }
+
+  .sticker-picker {
+    display: none; position: absolute; bottom: 76px; right: 16px;
+    background: var(--panel); padding: 12px; border-radius: 14px;
+    border: 1px solid var(--panel2); box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    grid-template-columns: repeat(6, 1fr); gap: 6px; z-index: 10;
+  }
+  .sticker-picker.open { display: grid; }
+  .sticker-picker span {
+    font-size: 24px; cursor: pointer; padding: 4px; border-radius: 8px;
+    text-align: center; transition: .15s;
+  }
+  .sticker-picker span:hover { background: var(--panel2); transform: scale(1.2); }
+
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+    z-index: 100; align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 540px; background: var(--panel);
+    border-radius: 18px; padding: 22px; max-height: 88vh; overflow-y: auto;
+    border: 1px solid var(--panel2);
+  }
+  .modal h3 { margin-bottom: 16px; font-size: 17px; }
+  .modal input, .modal select {
+    width: 100%; padding: 10px 12px; margin: 5px 0; border-radius: 9px;
+    border: 1px solid var(--panel2); background: var(--bg);
+    color: var(--text); font-family: inherit; font-size: 13px;
+  }
+  .modal-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .modal-actions button {
+    flex: 1; padding: 10px; border-radius: 9px; border: none;
+    cursor: pointer; font-family: inherit; font-weight: 600; font-size: 13px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--panel2); color: var(--text); }
+  .admin-user-row {
+    display: flex; align-items: center; gap: 8px; padding: 10px;
+    background: var(--bg); border-radius: 10px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .admin-user-row .info { flex: 1; min-width: 140px; }
+  .admin-user-row .info b { display: block; font-size: 13px; }
+  .admin-user-row .info small { color: var(--muted); font-size: 11px; display: block; }
+  .admin-user-row button {
+    padding: 6px 10px; font-size: 11px; border-radius: 7px;
+    border: none; cursor: pointer; font-family: inherit; color: #fff;
+  }
+  .btn-mini-danger { background: var(--danger); }
+  .btn-mini-secondary { background: var(--accent); }
+  .btn-mini-warn { background: var(--warn); }
+
+  .request-box {
+    background: rgba(245,158,11,.1); border: 1px solid var(--warn);
+    padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 12px;
+  }
+  .request-box b { color: var(--warn); }
+  .request-item {
+    display: flex; justify-content: space-between; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 12px;
+  }
+  .last-seen { font-size: 11px; color: var(--muted); }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--success); color: #fff; padding: 10px 20px;
+    border-radius: 10px; font-size: 13px; z-index: 200;
+    opacity: 0; transition: .3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 700px) {
+    .sidebar { width: 180px; }
+    .msg { max-width: 88%; }
+    .sidebar-header .info small { display: none; }
+  }
 </style>
 </head>
 <body>
 
   <!-- صفحه ورود -->
-  <div class="login-box" id="loginBox">
-    <h2>ورود به چت</h2>
-    <input type="email" id="email" placeholder="ایمیل" />
-    <input type="password" id="password" placeholder="پسورد" />
-    <button onclick="login()">ورود</button>
-    <div class="error" id="loginError"></div>
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-box">
+      <div class="logo">💬</div>
+      <h2>ورود به چت</h2>
+      <input type="email" id="email" placeholder="ایمیل" />
+      <input type="password" id="password" placeholder="پسورد" />
+      <button onclick="login()">ورود</button>
+      <div class="error" id="loginError"></div>
+    </div>
   </div>
 
-  <!-- صفحه چت -->
-  <div class="chat-container" id="chatContainer">
-    <header>
-      <span id="userLabel"></span>
-      <button onclick="logout()">خروج</button>
-    </header>
-    <div class="messages" id="messages"></div>
-    <form class="input-row" onsubmit="sendMessage(event)">
-      <input id="newMessage" placeholder="پیامت را بنویس..." autocomplete="off" />
-      <button type="submit">ارسال</button>
-    </form>
+  <!-- اپ -->
+  <div class="app" id="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="avatar" id="myAvatar">?</div>
+        <div class="info">
+          <b id="myEmail"></b>
+          <small id="myStatus">آماده</small>
+        </div>
+      </div>
+      <div class="users-title">کاربران</div>
+      <div class="users-list" id="usersList"></div>
+      <div class="sidebar-footer">
+        <button id="adminBtn" style="display:none;" onclick="openAdmin()">⚙️ مدیریت کاربران</button>
+        <button class="danger" onclick="logout()">خروج</button>
+      </div>
+    </aside>
+
+    <main class="chat">
+      <div class="chat-header">
+        <b>گفتگوی گروهی</b>
+        <span class="last-seen" id="headerLastSeen"></span>
+      </div>
+      <div class="messages" id="messages"></div>
+      <form class="input-row" onsubmit="sendMessage(event)">
+        <button type="button" class="sticker-btn" onclick="toggleStickers()">😀</button>
+        <input id="newMessage" placeholder="پیامت را بنویس..." autocomplete="off" />
+        <button type="submit" class="send-btn">ارسال</button>
+      </form>
+      <div class="sticker-picker" id="stickerPicker"></div>
+    </main>
   </div>
+
+  <!-- مودال ادمین -->
+  <div class="modal-bg" id="adminModal">
+    <div class="modal">
+      <h3>⚙️ مدیریت کاربران</h3>
+      <div id="adminUsersList">در حال بارگذاری...</div>
+
+      <hr style="border-color:var(--panel2); margin:16px 0;" />
+
+      <h3 style="font-size:15px;">➕ درخواست افزودن کاربر جدید</h3>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">
+        چون دسترسی مستقیم به ساخت کاربر نداریم، درخواست شما ثبت می‌شود.
+        سپس از پنل Supabase → Authentication → Users آن را بسازید.
+      </p>
+      <input id="newEmail" placeholder="ایمیل" />
+      <input id="newPass" placeholder="پسورد پیشنهادی" />
+      <input id="newName" placeholder="نام نمایشی (اختیاری)" />
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="requestCreateUser()">ثبت درخواست</button>
+        <button class="btn-secondary" onclick="closeAdmin()">بستن</button>
+      </div>
+      <div class="error" id="adminError"></div>
+      <div class="info-msg" id="adminInfo"></div>
+
+      <div class="request-box">
+        <b>📋 درخواست‌های در انتظار</b>
+        <div id="requestsList" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-  // ⚠️ این دو مقدار را از Supabase → Settings → API بردار
+  // ⚙️ مقادیر خودت
   const SUPABASE_URL = "https://kcqphtmuxzaqcqocxgtc.supabase.co";
   const SUPABASE_KEY = "sb_publishable_aQmfb0-Eu0LnF2nIYx7rew_FwiQl_Wk";
 
@@ -152,83 +300,157 @@
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
   let currentUser = null;
+  let currentProfile = null;
   let channel = null;
+  let usersChannel = null;
+  let profilesMap = {};
 
-  // بررسی وضعیت لاگین هنگام باز شدن صفحه
+  const STICKERS = ['😀','😂','🥰','😍','🤔','😎','😢','😡','👍','👎','❤️','🔥','🎉','🙏','👋','💯','😴','🤗','😱','🥳','😇','🤩','😜','🤝','✨','💔','🌈','🍕','☕','⚽'];
+
   window.addEventListener("DOMContentLoaded", async () => {
+    const picker = document.getElementById("stickerPicker");
+    STICKERS.forEach(s => {
+      const el = document.createElement("span");
+      el.textContent = s;
+      el.onclick = () => sendSticker(s);
+      picker.appendChild(el);
+    });
     const { data: { session } } = await db.auth.getSession();
-    if (session) showChat(session.user);
+    if (session) startApp(session.user);
   });
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2200);
+  }
 
   async function login() {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const errEl = document.getElementById("loginError");
     errEl.textContent = "";
-
     const { data, error } = await db.auth.signInWithPassword({ email, password });
-    if (error) {
-      errEl.textContent = "خطا: " + error.message;
-      return;
-    }
-    showChat(data.user);
+    if (error) { errEl.textContent = "خطا: " + error.message; return; }
+    startApp(data.user);
   }
 
   async function logout() {
-    if (channel) { await db.removeChannel(channel); channel = null; }
+    await updateLastSeen();
+    if (channel) await db.removeChannel(channel);
+    if (usersChannel) await db.removeChannel(usersChannel);
     await db.auth.signOut();
-    currentUser = null;
-    document.getElementById("chatContainer").classList.remove("active");
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("messages").innerHTML = "";
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
+    location.reload();
   }
 
-  async function showChat(user) {
+  async function startApp(user) {
     currentUser = user;
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("chatContainer").classList.add("active");
-    document.getElementById("userLabel").textContent = "👤 " + user.email;
+    document.getElementById("loginWrap").style.display = "none";
+    document.getElementById("app").classList.add("active");
+    document.getElementById("myEmail").textContent = user.email;
+    document.getElementById("myAvatar").textContent = (user.email[0] || "?").toUpperCase();
 
+    const { data: prof } = await db.from("profiles").select("*").eq("id", user.id).single();
+    currentProfile = prof;
+    if (prof?.role === "admin") {
+      document.getElementById("adminBtn").style.display = "block";
+      document.getElementById("myStatus").textContent = "🛡️ ادمین";
+    }
+
+    await loadProfiles();
     await loadMessages();
     subscribeRealtime();
+    startPresenceTimer();
+  }
+
+  async function updateLastSeen() {
+    if (!currentUser) return;
+    await db.from("profiles")
+      .update({ last_seen: new Date().toISOString() })
+      .eq("id", currentUser.id);
+  }
+
+  function startPresenceTimer() {
+    updateLastSeen();
+    setInterval(updateLastSeen, 30000);
+    window.addEventListener("beforeunload", () => updateLastSeen());
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) updateLastSeen();
+    });
+  }
+
+  async function loadProfiles() {
+    const { data } = await db.from("profiles").select("*").order("created_at");
+    profilesMap = {};
+    (data || []).forEach(p => profilesMap[p.id] = p);
+    renderUsersList(data || []);
+    updateHeaderLastSeen();
+  }
+
+  function renderUsersList(profiles) {
+    const list = document.getElementById("usersList");
+    list.innerHTML = "";
+    profiles.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "user-item";
+      const initial = (p.display_name || p.email || "?")[0].toUpperCase();
+      const isOnline = p.last_seen && (Date.now() - new Date(p.last_seen).getTime() < 60000);
+      div.innerHTML = `
+        <div class="avatar">${initial}</div>
+        <div class="name">${escapeHtml(p.display_name || p.email)}</div>
+        ${p.role === 'admin' ? '<span class="badge admin">ادمین</span>' : ''}
+        <div class="dot ${isOnline ? 'online' : ''}"></div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function updateHeaderLastSeen() {
+    if (currentProfile?.role !== 'admin') {
+      document.getElementById("headerLastSeen").textContent = "";
+      return;
+    }
+    const parts = [];
+    Object.values(profilesMap).forEach(p => {
+      if (p.id === currentUser.id) return;
+      const seen = p.last_seen ? new Date(p.last_seen).toLocaleString('fa-IR') : 'نامشخص';
+      parts.push(`${p.email}: ${seen}`);
+    });
+    document.getElementById("headerLastSeen").textContent = parts.join(' | ');
   }
 
   async function loadMessages() {
-    const { data, error } = await db
-      .from("messages")
-      .select("*")
-      .order("created_at", { ascending: true });
-
-    if (error) { console.error(error); return; }
-
-    const container = document.getElementById("messages");
-    container.innerHTML = "";
+    const { data } = await db.from("messages").select("*").order("created_at");
+    const box = document.getElementById("messages");
+    box.innerHTML = "";
     (data || []).forEach(renderMessage);
     scrollBottom();
   }
 
   function subscribeRealtime() {
-    channel = db
-      .channel("messages-realtime")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          renderMessage(payload.new);
-          scrollBottom();
-        }
-      )
+    channel = db.channel("messages-rt")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => { renderMessage(payload.new); scrollBottom(); })
+      .subscribe();
+
+    usersChannel = db.channel("profiles-rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" },
+        async () => { await loadProfiles(); })
       .subscribe();
   }
 
   function renderMessage(m) {
-    const container = document.getElementById("messages");
+    const box = document.getElementById("messages");
     const div = document.createElement("div");
     div.className = "msg " + (m.user_id === currentUser.id ? "mine" : "theirs");
-    div.innerHTML = `<small>${escapeHtml(m.username)}</small><p>${escapeHtml(m.content)}</p>`;
-    container.appendChild(div);
+    const sender = profilesMap[m.user_id]?.display_name || m.username;
+    if (m.type === "sticker") {
+      div.innerHTML = `<small>${escapeHtml(sender)}</small><div class="sticker">${m.content}</div>`;
+    } else {
+      div.innerHTML = `<small>${escapeHtml(sender)}</small>${escapeHtml(m.content)}`;
+    }
+    box.appendChild(div);
   }
 
   async function sendMessage(e) {
@@ -236,15 +458,28 @@
     const input = document.getElementById("newMessage");
     const text = input.value.trim();
     if (!text) return;
-
+    input.value = "";
     const { error } = await db.from("messages").insert({
       user_id: currentUser.id,
-      username: currentUser.email,
-      content: text
+      username: currentProfile?.display_name || currentUser.email,
+      content: text, type: "text"
     });
+    if (error) toast("خطا: " + error.message);
+  }
 
-    if (error) alert("خطا در ارسال: " + error.message);
-    else input.value = "";
+  async function sendSticker(sticker) {
+    toggleStickers(false);
+    await db.from("messages").insert({
+      user_id: currentUser.id,
+      username: currentProfile?.display_name || currentUser.email,
+      content: sticker, type: "sticker"
+    });
+  }
+
+  function toggleStickers(force) {
+    const p = document.getElementById("stickerPicker");
+    if (force === false) p.classList.remove("open");
+    else p.classList.toggle("open");
   }
 
   function scrollBottom() {
@@ -253,11 +488,110 @@
   }
 
   function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  // ============ ادمین ============
+  function openAdmin() {
+    document.getElementById("adminModal").classList.add("open");
+    loadAdminUsers();
+    loadRequests();
+  }
+  function closeAdmin() {
+    document.getElementById("adminModal").classList.remove("open");
+    document.getElementById("adminError").textContent = "";
+    document.getElementById("adminInfo").textContent = "";
+  }
+
+  async function loadAdminUsers() {
+    const box = document.getElementById("adminUsersList");
+    box.innerHTML = "در حال بارگذاری...";
+    const { data, error } = await db.from("profiles").select("*").order("created_at");
+    if (error) { box.innerHTML = `<div class="error">${error.message}</div>`; return; }
+    box.innerHTML = "";
+    (data || []).forEach(u => {
+      const lastSeen = u.last_seen ? new Date(u.last_seen).toLocaleString('fa-IR') : 'هرگز';
+      const row = document.createElement("div");
+      row.className = "admin-user-row";
+      row.innerHTML = `
+        <div class="info">
+          <b>${escapeHtml(u.email)}</b>
+          <small>آخرین بازدید: ${lastSeen}</small>
+          ${u.role === 'admin' ? '<small style="color:var(--danger)">🛡️ ادمین</small>' : ''}
+        </div>
+        <button class="btn-mini-warn" onclick="toggleRole('${u.id}','${u.role}')">${u.role === 'admin' ? 'حذف ادمین' : 'ادمین کن'}</button>
+        <button class="btn-mini-danger" onclick="removeProfile('${u.id}','${u.email}')">حذف از لیست</button>
+      `;
+      box.appendChild(row);
+    });
+  }
+
+  async function removeProfile(id, email) {
+    if (!confirm(`کاربر ${email} از لیست پروفایل حذف شود؟\n(اکانت اصلی در Supabase باقی می‌ماند)`)) return;
+    const { error } = await db.from("profiles").delete().eq("id", id);
+    if (error) { alert(error.message); return; }
+    toast("از لیست حذف شد");
+    await loadAdminUsers();
+    await loadProfiles();
+  }
+
+  async function toggleRole(id, currentRole) {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    const { error } = await db.from("profiles").update({ role: newRole }).eq("id", id);
+    if (error) { alert(error.message); return; }
+    toast(newRole === 'admin' ? "ادمین شد ✅" : "به کاربر عادی تغییر کرد");
+    await loadAdminUsers();
+    await loadProfiles();
+  }
+
+  async function requestCreateUser() {
+    const email = document.getElementById("newEmail").value.trim();
+    const password = document.getElementById("newPass").value;
+    const name = document.getElementById("newName").value.trim();
+    const errEl = document.getElementById("adminError");
+    const infoEl = document.getElementById("adminInfo");
+    errEl.textContent = ""; infoEl.textContent = "";
+    if (!email || !password) { errEl.textContent = "ایمیل و پسورد الزامی است"; return; }
+
+    const { error } = await db.from("user_requests").insert({
+      requested_by: currentUser.id,
+      action: 'create',
+      target_email: email,
+      new_password: password
+    });
+    if (error) { errEl.textContent = error.message; return; }
+
+    infoEl.textContent = "درخواست ثبت شد ✅";
+    document.getElementById("newEmail").value = "";
+    document.getElementById("newPass").value = "";
+    document.getElementById("newName").value = "";
+    await loadRequests();
+  }
+
+  async function loadRequests() {
+    const box = document.getElementById("requestsList");
+    const { data } = await db.from("user_requests")
+      .select("*").eq("status", "pending").order("created_at", { ascending: false });
+    if (!data || data.length === 0) {
+      box.innerHTML = '<div style="color:var(--muted); font-size:12px;">درخواستی نیست</div>';
+      return;
+    }
+    box.innerHTML = "";
+    data.forEach(r => {
+      const div = document.createElement("div");
+      div.className = "request-item";
+      div.innerHTML = `
+        <span>${escapeHtml(r.target_email)} <small style="color:var(--muted)">(پسورد: ${escapeHtml(r.new_password || '-')})</small></span>
+        <button class="btn-mini-danger" style="padding:3px 8px; font-size:10px;" onclick="markDone(${r.id})">انجام شد</button>
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  async function markDone(id) {
+    await db.from("user_requests").update({ status: "done" }).eq("id", id);
+    await loadRequests();
   }
 </script>
 </body>
