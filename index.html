@@ -68,6 +68,7 @@ input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,
 @keyframes wiggle{0%{transform:scale(.3) rotate(-20deg)}60%{transform:scale(1.2) rotate(8deg)}100%{transform:none}}
 .msg.txt{background:linear-gradient(135deg,#ff5c93,#b79cff);border:none;padding:10px 18px 5px;text-align:center;font-weight:800;font-size:17px}
 .msg.del{background:rgba(255,255,255,.05);border:1px dashed var(--line);box-shadow:none;color:var(--muted);font-style:italic}
+.tick{font-weight:700;letter-spacing:-4px;margin-inline-end:4px;font-size:12px}.tick.read{color:#7df3ff}
 .rxs{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .rx{background:rgba(0,0,0,.25);border:1px solid transparent;color:var(--text);border-radius:12px;padding:1px 8px;font-size:12px;cursor:pointer}.rx.me{border-color:var(--gold);background:rgba(255,217,168,.18)}
 #ctx{display:none;position:fixed;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.6);padding:6px;min-width:170px;animation:pop .15s ease}
@@ -182,7 +183,7 @@ const I18N = {
 fa:{welcome:'خوش اومدی عزیزم',welcomeSub:'جایی برای دل‌نوشته‌های ما دو نفر',email:'ایمیل',password:'پسورد',login:'ورود 💌',langBtn:'🌐 English',
  ready:'آماده 💫',adminTag:'🛡️ ادمین',users:'💞 کاربران',manage:'⚙️ مدیریت کاربران',logs:'📜 لاگ تغییرات',logout:'خروج',chatTitle:'💕 گفتگوی ما',
  placeholder:'یه چیز قشنگ بنویس...',send:'ارسال 💌',save:'ذخیره ✔️',err:'خطا: ',typing:n=>`${n} در حال نوشتن...`,
- reply:'↩️ پاسخ',copy:'📋 کپی',edit:'✏️ ویرایش',del:'🗑️ حذف',deleted:'این پیام پاک شد',edited:'ویرایش‌شده',copied:'کپی شد',
+ reply:'↩️ پاسخ',copy:'📋 کپی',edit:'✏️ ویرایش',del:'🗑️ حذف',deleted:'این پیام پاک شد',edited:'ویرایش‌شده',copied:'کپی شد',sent:'ارسال شد',readBy:'خوانده شد توسط',
  replying:'پاسخ به',editing:'ویرایش پیام',confirmDel:'این پیام پاک شود؟',uploading:'در حال ارسال عکس...',photo:'🖼️ عکس',
  logsTitle:'📜 لاگ ویرایش و حذف پیام‌ها',noLogs:'هنوز چیزی ثبت نشده',actEdit:'✏️ ویرایش',actDel:'🗑️ حذف',before:'قبل:',after:'بعد:',by:'توسط',
  close:'بستن',loading:'در حال بارگذاری...',addReq:'➕ درخواست افزودن کاربر جدید',addReqNote:'درخواست ثبت می‌شود؛ سپس از Supabase ← Authentication ← Users بسازید.',
@@ -193,7 +194,7 @@ fa:{welcome:'خوش اومدی عزیزم',welcomeSub:'جایی برای دل‌
 en:{welcome:'Welcome, my love',welcomeSub:'A little place just for the two of us',email:'Email',password:'Password',login:'Sign in 💌',langBtn:'🌐 فارسی',
  ready:'Ready 💫',adminTag:'🛡️ Admin',users:'💞 Users',manage:'⚙️ Manage users',logs:'📜 Change log',logout:'Log out',chatTitle:'💕 Our chat',
  placeholder:'Write something sweet...',send:'Send 💌',save:'Save ✔️',err:'Error: ',typing:n=>`${n} is typing...`,
- reply:'↩️ Reply',copy:'📋 Copy',edit:'✏️ Edit',del:'🗑️ Delete',deleted:'This message was deleted',edited:'edited',copied:'Copied',
+ reply:'↩️ Reply',copy:'📋 Copy',edit:'✏️ Edit',del:'🗑️ Delete',deleted:'This message was deleted',edited:'edited',copied:'Copied',sent:'Sent',readBy:'Read by',
  replying:'Replying to',editing:'Editing message',confirmDel:'Delete this message?',uploading:'Uploading photo...',photo:'🖼️ Photo',
  logsTitle:'📜 Edit & delete log',noLogs:'Nothing logged yet',actEdit:'✏️ Edit',actDel:'🗑️ Delete',before:'Before:',after:'After:',by:'by',
  close:'Close',loading:'Loading...',addReq:'➕ Request a new user',addReqNote:'The request is saved; then create the user in Supabase → Authentication → Users.',
@@ -257,7 +258,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   $('file').addEventListener('change',e=>{const f=e.target.files[0]; e.target.value=''; if(f) sendImage(f);});
   $('newMessage').addEventListener('input',sendTyping);
   document.addEventListener('click',e=>{ if(!e.target.closest('#ctx,.more')) $('ctx').style.display='none'; });
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){unread=0;document.title='Love Chat 💕';updateLastSeen();} });
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){unread=0;document.title='Love Chat 💕';updateLastSeen();markRead();} });
   const {data:{session}}=await db.auth.getSession(); if(session) startApp(session.user);
 });
 function toast(m){const e=$('toast'); e.textContent=m; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),2200);}
@@ -274,7 +275,7 @@ async function startApp(user){
   $('myEmail').textContent=user.email; $('myAvatar').textContent=(user.email[0]||'?').toUpperCase();
   const {data:prof}=await db.from('profiles').select('*').eq('id',user.id).single(); currentProfile=prof;
   if(isAdmin()){ $('adminBtn').style.display='block'; $('logsBtn').style.display='block'; await loadLogs(); }
-  applyLang(); await loadProfiles(); await loadMessages(); subscribeRealtime(); startPresenceTimer();
+  applyLang(); await loadProfiles(); await loadMessages(); subscribeRealtime(); markRead(); startPresenceTimer();
 }
 async function updateLastSeen(){ if(currentUser) await db.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',currentUser.id); }
 function startPresenceTimer(){
@@ -314,7 +315,7 @@ function subscribeRealtime(){
       const m=p.new; msgs[m.id]=m; if(!order.includes(m.id)) order.push(m.id);
       const near=nearBottom(); appendMsg(m); if(near||m.user_id===currentUser.id) scrollBottom();
       if(document.hidden&&m.user_id!==currentUser.id){unread++;document.title=`(${unread}) Love Chat 💕`;}
-      clearTyping(m.user_id);})
+      clearTyping(m.user_id); markRead();})
    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},p=>{ msgs[p.new.id]=p.new; refreshMsg(p.new.id); })
    .subscribe();
   db.channel('profiles-rt').on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>{clearTimeout(profTimer);profTimer=setTimeout(loadProfiles,800);}).subscribe();
@@ -365,13 +366,31 @@ function buildMsg(m){
   const ed=m.edited_at&&!m.deleted_at?`<span class="ed" ${isAdmin()&&logsByMsg[m.id]?`title="${esc(histTitle(m.id))}"`:''}>✏️ ${t('edited')}</span>`:'';
   const more=m.deleted_at&&!isAdmin()?'':`<button class="more" type="button">⋯</button>`;
   div.className='msg '+(mine?'mine':'theirs')+cls; div.dataset.id=m.id;
-  div.innerHTML=`${mine?'':`<span class="who">${esc(sender)}</span>`}${body}${extra}<div class="meta">${more}${ed}<span>${time}</span></div>`;
+  div.innerHTML=`${mine?'':`<span class="who">${esc(sender)}</span>`}${body}${extra}<div class="meta">${more}${ed}<span>${time}</span>${mine&&!m.deleted_at?tickHtml(m):''}</div>`;
   const mb=div.querySelector('.more'); if(mb) mb.onclick=e=>{e.stopPropagation(); openMenu(m,mb);};
   div.querySelectorAll('.rx').forEach(b=>b.onclick=()=>react(m.id,b.dataset.e));
   const q=div.querySelector('.quote'); if(q) q.onclick=()=>{const t=els[q.dataset.q]; if(t){t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1200);}};
   const im=div.querySelector('img.pic'); if(im) im.onclick=()=>{$('lbImg').src=im.src;$('lightbox').classList.add('open');};
   if(!m.deleted_at) div.ondblclick=()=>react(m.id,'❤️');
   return div;
+}
+function tickHtml(m){
+  const others=Object.keys(profilesMap).filter(id=>id!==currentUser.id);
+  const rb=(m.read_by||[]).filter(id=>id!==currentUser.id);
+  if(!rb.length) return `<span class="tick" title="${t('sent')}">✓</span>`;
+  const all=others.every(id=>rb.includes(id));
+  const names=rb.map(id=>profilesMap[id]?.display_name||profilesMap[id]?.email||'').join(', ');
+  return `<span class="tick ${all?'read':''}" title="${t('readBy')} ${esc(names)}">✓✓</span>`;
+}
+let readTimer=null;
+function markRead(){
+  clearTimeout(readTimer);
+  readTimer=setTimeout(async()=>{
+    if(document.hidden||!currentUser) return;
+    const need=order.some(id=>{const m=msgs[id];return m&&m.user_id!==currentUser.id&&!m.deleted_at&&!(m.read_by||[]).includes(currentUser.id);});
+    if(!need) return;
+    const {error}=await db.rpc('mark_messages_read'); if(error) console.warn(error.message);
+  },400);
 }
 const previewOf=m=>m.deleted_at?'':(m.image_url&&!m.content?t('photo'):String(m.content||'').replace(PREFIX,'').replace(TPREFIX,'')).slice(0,60);
 
