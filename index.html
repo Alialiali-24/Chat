@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>چت دو نفره</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Tahoma, sans-serif;
+    background: #f0f2f5;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-box {
+    width: 340px;
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+  }
+  .login-box h2 { text-align: center; margin-top: 0; }
+  .login-box input, .login-box button {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .login-box button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .login-box button:hover { background: #0069d9; }
+  .error { color: #d33; font-size: 13px; text-align: center; min-height: 18px; }
+
+  .chat-container {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    height: 100vh;
+    background: #fff;
+  }
+  .chat-container.active { display: flex; }
+
+  header {
+    background: #007bff;
+    color: #fff;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+  }
+  header button {
+    background: #ff4444;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    background: #e5ddd5;
+  }
+  .msg {
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-width: 75%;
+    word-wrap: break-word;
+    font-size: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+  .msg.mine { background: #dcf8c6; margin-right: auto; margin-left: 0; }
+  .msg.theirs { background: #fff; margin-left: auto; margin-right: 0; }
+  .msg small { display: block; font-size: 10px; color: #666; margin-bottom: 2px; }
+  .msg p { margin: 0; }
+
+  .input-row {
+    display: flex;
+    padding: 8px;
+    border-top: 1px solid #ddd;
+    background: #f7f7f7;
+  }
+  .input-row input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .input-row button {
+    margin-right: 8px;
+    padding: 10px 18px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+  }
+  .input-row button:hover { background: #0069d9; }
+</style>
+</head>
+<body>
+
+  <!-- صفحه ورود -->
+  <div class="login-box" id="loginBox">
+    <h2>ورود به چت</h2>
+    <input type="email" id="email" placeholder="ایمیل" />
+    <input type="password" id="password" placeholder="پسورد" />
+    <button onclick="login()">ورود</button>
+    <div class="error" id="loginError"></div>
+  </div>
+
+  <!-- صفحه چت -->
+  <div class="chat-container" id="chatContainer">
+    <header>
+      <span id="userLabel"></span>
+      <button onclick="logout()">خروج</button>
+    </header>
+    <div class="messages" id="messages"></div>
+    <form class="input-row" onsubmit="sendMessage(event)">
+      <input id="newMessage" placeholder="پیامت را بنویس..." autocomplete="off" />
+      <button type="submit">ارسال</button>
+    </form>
+  </div>
+
+<script>
+  // ⚠️ این دو مقدار را از Supabase → Settings → API بردار
+  const SUPABASE_URL = "https://kcqphtmuxzaqcqocxgtc.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_aQmfb0-Eu0LnF2nIYx7rew_FwiQl_Wk";
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let currentUser = null;
+  let channel = null;
+
+  // بررسی وضعیت لاگین هنگام باز شدن صفحه
+  window.addEventListener("DOMContentLoaded", async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) showChat(session.user);
+  });
+
+  async function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const errEl = document.getElementById("loginError");
+    errEl.textContent = "";
+
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      errEl.textContent = "خطا: " + error.message;
+      return;
+    }
+    showChat(data.user);
+  }
+
+  async function logout() {
+    if (channel) { await db.removeChannel(channel); channel = null; }
+    await db.auth.signOut();
+    currentUser = null;
+    document.getElementById("chatContainer").classList.remove("active");
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("messages").innerHTML = "";
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+  }
+
+  async function showChat(user) {
+    currentUser = user;
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("chatContainer").classList.add("active");
+    document.getElementById("userLabel").textContent = "👤 " + user.email;
+
+    await loadMessages();
+    subscribeRealtime();
+  }
+
+  async function loadMessages() {
+    const { data, error } = await db
+      .from("messages")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) { console.error(error); return; }
+
+    const container = document.getElementById("messages");
+    container.innerHTML = "";
+    (data || []).forEach(renderMessage);
+    scrollBottom();
+  }
+
+  function subscribeRealtime() {
+    channel = db
+      .channel("messages-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          renderMessage(payload.new);
+          scrollBottom();
+        }
+      )
+      .subscribe();
+  }
+
+  function renderMessage(m) {
+    const container = document.getElementById("messages");
+    const div = document.createElement("div");
+    div.className = "msg " + (m.user_id === currentUser.id ? "mine" : "theirs");
+    div.innerHTML = `<small>${escapeHtml(m.username)}</small><p>${escapeHtml(m.content)}</p>`;
+    container.appendChild(div);
+  }
+
+  async function sendMessage(e) {
+    e.preventDefault();
+    const input = document.getElementById("newMessage");
+    const text = input.value.trim();
+    if (!text) return;
+
+    const { error } = await db.from("messages").insert({
+      user_id: currentUser.id,
+      username: currentUser.email,
+      content: text
+    });
+
+    if (error) alert("خطا در ارسال: " + error.message);
+    else input.value = "";
+  }
+
+  function scrollBottom() {
+    const c = document.getElementById("messages");
+    c.scrollTop = c.scrollHeight;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+</script>
+</body>
+</html>
