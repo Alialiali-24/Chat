@@ -100,6 +100,12 @@ input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,
 .request-item{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
 #lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:300;align-items:center;justify-content:center;cursor:zoom-out}#lightbox.open{display:flex}#lightbox img{max-width:94vw;max-height:94vh;border-radius:12px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--rose);color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;z-index:400;opacity:0;transition:.3s;pointer-events:none}.toast.show{opacity:1}
+#welPop{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;background:rgba(10,2,12,.78);backdrop-filter:blur(6px);padding:16px;cursor:pointer}#welPop.open{display:flex}
+.wcard{position:relative;width:min(420px,100%);min-height:320px;border-radius:26px;overflow:hidden;background:linear-gradient(135deg,#6b1f55,#3d1c45) center/cover no-repeat;display:flex;align-items:flex-end;box-shadow:0 30px 90px rgba(255,92,147,.35);animation:pop .35s ease}
+.wcard::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(16,5,15,.9),rgba(16,5,15,.1) 75%)}
+.wcard p{position:relative;padding:26px 22px 34px;font-size:20px;font-weight:800;line-height:1.9;text-align:center;width:100%;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.wbar{position:absolute;bottom:0;inset-inline:0;height:5px;background:rgba(255,255,255,.15)}.wbar i{display:block;height:100%;background:var(--mine);animation:wshrink 5s linear forwards}@keyframes wshrink{from{width:100%}to{width:0}}
+.wimg{width:100%;height:150px;border-radius:14px;background:var(--panel2) center/cover;margin:8px 0}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--panel2);border-radius:6px}
 @media(max-width:700px){
 .sidebar{position:fixed;inset-block:0;inset-inline-start:0;width:78%;max-width:280px;z-index:50;transform:translateX(100%)}[dir=ltr] .sidebar{transform:translateX(-100%)}
@@ -129,6 +135,7 @@ input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,
     <div class="sidebar-footer">
       <button id="adminBtn" style="display:none" onclick="openAdmin()" data-i18n="manage"></button>
       <button id="logsBtn" style="display:none" onclick="openLogs()" data-i18n="logs"></button>
+      <button id="welBtn" style="display:none" onclick="openWelAdmin()" data-i18n="welcomeAdmin"></button>
       <button onclick="toggleLang()" data-i18n="langBtn"></button>
       <button class="danger" onclick="logout()" data-i18n="logout"></button>
     </div>
@@ -171,6 +178,19 @@ input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,
   <div class="error" id="adminError"></div><div class="info-msg" id="adminInfo"></div>
   <div class="request-box"><b data-i18n="pending"></b><div id="requestsList" style="margin-top:8px"></div></div>
 </div></div>
+<div id="welPop" onclick="closeWelcome()"><div class="wcard" id="welCard"><p id="welText"></p><div class="wbar" id="welBar"></div></div></div>
+<div class="modal-bg" id="welModal"><div class="modal">
+  <h3 data-i18n="welcomeAdmin"></h3>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px" data-i18n="welNote"></p>
+  <div id="welList"></div>
+  <input id="welInput" data-ph="welPh" />
+  <div class="modal-actions"><button class="btn-primary" onclick="addWelcome()" data-i18n="add"></button></div>
+  <hr style="border-color:var(--line);margin:16px 0" />
+  <div class="wimg" id="welImg"></div>
+  <input type="file" id="welFile" accept="image/*" hidden />
+  <div class="modal-actions"><button class="btn-secondary" onclick="$('welFile').click()" data-i18n="welPickImg"></button><button class="btn-secondary" onclick="removeWelImg()" data-i18n="welRmImg"></button></div>
+  <div class="modal-actions"><button class="btn-primary" onclick="showWelcome()" data-i18n="preview"></button><button class="btn-secondary" onclick="$('welModal').classList.remove('open')" data-i18n="close"></button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -183,7 +203,7 @@ const I18N = {
 fa:{welcome:'خوش اومدی عزیزم',welcomeSub:'جایی برای دل‌نوشته‌های ما دو نفر',email:'ایمیل',password:'پسورد',login:'ورود 💌',langBtn:'🌐 English',
  ready:'آماده 💫',adminTag:'🛡️ ادمین',users:'💞 کاربران',manage:'⚙️ مدیریت کاربران',logs:'📜 لاگ تغییرات',logout:'خروج',chatTitle:'💕 گفتگوی ما',
  placeholder:'یه چیز قشنگ بنویس...',send:'ارسال 💌',save:'ذخیره ✔️',err:'خطا: ',typing:n=>`${n} در حال نوشتن...`,
- reply:'↩️ پاسخ',copy:'📋 کپی',edit:'✏️ ویرایش',del:'🗑️ حذف',deleted:'این پیام پاک شد',edited:'ویرایش‌شده',copied:'کپی شد',sent:'ارسال شد',readBy:'خوانده شد توسط',
+ reply:'↩️ پاسخ',copy:'📋 کپی',edit:'✏️ ویرایش',del:'🗑️ حذف',deleted:'این پیام پاک شد',edited:'ویرایش‌شده',copied:'کپی شد',sent:'ارسال شد',welcomeAdmin:'🎬 پیام خوش‌آمد',welNote:'هر بار که کاربر وارد می‌شه، یکی از این متن‌ها به‌صورت تصادفی ۵ ثانیه روی عکس پس‌زمینه نشون داده می‌شه.',welPh:'یه متن خوش‌آمد بنویس...',add:'افزودن',welPickImg:'🖼️ انتخاب عکس پس‌زمینه',welRmImg:'حذف عکس',preview:'👁️ پیش‌نمایش',welOn:'فعال',welOff:'غیرفعال',welEmpty:'هنوز متنی ننوشتی',readBy:'خوانده شد توسط',
  replying:'پاسخ به',editing:'ویرایش پیام',confirmDel:'این پیام پاک شود؟',uploading:'در حال ارسال عکس...',photo:'🖼️ عکس',
  logsTitle:'📜 لاگ ویرایش و حذف پیام‌ها',noLogs:'هنوز چیزی ثبت نشده',actEdit:'✏️ ویرایش',actDel:'🗑️ حذف',before:'قبل:',after:'بعد:',by:'توسط',
  close:'بستن',loading:'در حال بارگذاری...',addReq:'➕ درخواست افزودن کاربر جدید',addReqNote:'درخواست ثبت می‌شود؛ سپس از Supabase ← Authentication ← Users بسازید.',
@@ -194,7 +214,7 @@ fa:{welcome:'خوش اومدی عزیزم',welcomeSub:'جایی برای دل‌
 en:{welcome:'Welcome, my love',welcomeSub:'A little place just for the two of us',email:'Email',password:'Password',login:'Sign in 💌',langBtn:'🌐 فارسی',
  ready:'Ready 💫',adminTag:'🛡️ Admin',users:'💞 Users',manage:'⚙️ Manage users',logs:'📜 Change log',logout:'Log out',chatTitle:'💕 Our chat',
  placeholder:'Write something sweet...',send:'Send 💌',save:'Save ✔️',err:'Error: ',typing:n=>`${n} is typing...`,
- reply:'↩️ Reply',copy:'📋 Copy',edit:'✏️ Edit',del:'🗑️ Delete',deleted:'This message was deleted',edited:'edited',copied:'Copied',sent:'Sent',readBy:'Read by',
+ reply:'↩️ Reply',copy:'📋 Copy',edit:'✏️ Edit',del:'🗑️ Delete',deleted:'This message was deleted',edited:'edited',copied:'Copied',sent:'Sent',welcomeAdmin:'🎬 Welcome popup',welNote:'Each time a user comes in, one of these texts is picked at random and shown for 5 seconds over the background image.',welPh:'Write a welcome text...',add:'Add',welPickImg:'🖼️ Choose background image',welRmImg:'Remove image',preview:'👁️ Preview',welOn:'On',welOff:'Off',welEmpty:'No texts yet',readBy:'Read by',
  replying:'Replying to',editing:'Editing message',confirmDel:'Delete this message?',uploading:'Uploading photo...',photo:'🖼️ Photo',
  logsTitle:'📜 Edit & delete log',noLogs:'Nothing logged yet',actEdit:'✏️ Edit',actDel:'🗑️ Delete',before:'Before:',after:'After:',by:'by',
  close:'Close',loading:'Loading...',addReq:'➕ Request a new user',addReqNote:'The request is saved; then create the user in Supabase → Authentication → Users.',
@@ -274,8 +294,8 @@ async function startApp(user){
   currentUser=user; $('loginWrap').style.display='none'; $('app').classList.add('active');
   $('myEmail').textContent=user.email; $('myAvatar').textContent=(user.email[0]||'?').toUpperCase();
   const {data:prof}=await db.from('profiles').select('*').eq('id',user.id).single(); currentProfile=prof;
-  if(isAdmin()){ $('adminBtn').style.display='block'; $('logsBtn').style.display='block'; await loadLogs(); }
-  applyLang(); await loadProfiles(); await loadMessages(); subscribeRealtime(); markRead(); startPresenceTimer();
+  if(isAdmin()){ $('adminBtn').style.display='block'; $('logsBtn').style.display='block'; $('welBtn').style.display='block'; await loadLogs(); }
+  loadWelcome().then(()=>showWelcome()); applyLang(); await loadProfiles(); await loadMessages(); subscribeRealtime(); markRead(); startPresenceTimer();
 }
 async function updateLastSeen(){ if(currentUser) await db.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',currentUser.id); }
 function startPresenceTimer(){
@@ -477,6 +497,55 @@ function renderLogs(){
       <span class="old">${t('before')} ${esc(l.old_content||'')}</span>${l.new_content!=null?`<span class="new">${t('after')} ${esc(l.new_content)}</span>`:''}
       ${l.image_url?`<img src="${esc(l.image_url)}" alt="">`:''}</span></div>`;}).join('');
 }
+
+/* ---------- پاپ‌آپ خوش‌آمد ---------- */
+const WEL_MS=5000, AWAY_MS=5*60*1000; let welcome={all:[],image:null}, welTimer=null, hiddenAt=0;
+async function loadWelcome(){
+  const [a,b]=await Promise.all([db.from('welcome_messages').select('*').order('created_at'),db.from('app_settings').select('*').eq('key','welcome_image').maybeSingle()]);
+  welcome.all=a.data||[]; welcome.image=b.data?.value||null;
+}
+function showWelcome(){
+  const list=welcome.all.filter(w=>w.active); if(!list.length) return;
+  const w=list[Math.floor(Math.random()*list.length)];
+  $('welCard').style.backgroundImage=welcome.image?`url("${welcome.image.replace(/"/g,'%22')}")`:'';
+  $('welText').textContent=w.text;
+  $('welBar').innerHTML='<i></i>'; $('welPop').classList.add('open');
+  clearTimeout(welTimer); welTimer=setTimeout(closeWelcome,WEL_MS);
+}
+function closeWelcome(){ clearTimeout(welTimer); $('welPop').classList.remove('open'); }
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ hiddenAt=Date.now(); }
+  else if(currentUser&&hiddenAt&&Date.now()-hiddenAt>AWAY_MS){ hiddenAt=0; loadWelcome().then(showWelcome); }
+});
+async function openWelAdmin(){ await loadWelcome(); renderWelAdmin(); $('welModal').classList.add('open'); }
+function renderWelAdmin(){
+  const box=$('welList'); box.innerHTML='';
+  if(!welcome.all.length) box.innerHTML=`<div style="color:var(--muted);margin-bottom:8px">${t('welEmpty')}</div>`;
+  welcome.all.forEach(w=>{
+    const r=document.createElement('div'); r.className='row'; r.style.opacity=w.active?1:.5;
+    r.innerHTML=`<div class="info"><b>${esc(w.text)}</b></div><button class="mini-warn">${w.active?t('welOn'):t('welOff')}</button><button class="mini-danger">🗑️</button>`;
+    const [a,b]=r.querySelectorAll('button');
+    a.onclick=async()=>{await db.from('welcome_messages').update({active:!w.active}).eq('id',w.id); await loadWelcome(); renderWelAdmin();};
+    b.onclick=async()=>{await db.from('welcome_messages').delete().eq('id',w.id); await loadWelcome(); renderWelAdmin();};
+    box.appendChild(r);
+  });
+  $('welImg').style.backgroundImage=welcome.image?`url("${welcome.image.replace(/"/g,'%22')}")`:'';
+}
+async function addWelcome(){
+  const v=$('welInput').value.trim(); if(!v) return;
+  const {error}=await db.from('welcome_messages').insert({text:v});
+  if(error){toast(t('err')+error.message);return;} $('welInput').value=''; await loadWelcome(); renderWelAdmin();
+}
+$('welFile').addEventListener('change',async e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f) return; toast(t('uploading'));
+  const blob=await shrink(f), path=`welcome/${Date.now()}.jpg`;
+  const up=await db.storage.from('chat-images').upload(path,blob,{contentType:blob.type||'image/jpeg'});
+  if(up.error){toast(t('err')+up.error.message);return;}
+  const url=db.storage.from('chat-images').getPublicUrl(path).data.publicUrl;
+  const {error}=await db.from('app_settings').upsert({key:'welcome_image',value:url});
+  if(error){toast(t('err')+error.message);return;} await loadWelcome(); renderWelAdmin();
+});
+async function removeWelImg(){ await db.from('app_settings').delete().eq('key','welcome_image'); await loadWelcome(); renderWelAdmin(); }
 
 /* ---------- ادمین ---------- */
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
