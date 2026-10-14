@@ -2,600 +2,453 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ورود</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>چت عاشقانه 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0f172a; --panel: #1e293b; --panel2: #334155;
-    --accent: #6366f1; --accent2: #8b5cf6;
-    --mine: #4f46e5; --theirs: #334155;
-    --text: #f1f5f9; --muted: #94a3b8;
-    --danger: #ef4444; --success: #10b981; --warn: #f59e0b;
-  }
-  body {
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-    color: var(--text); height: 100vh; overflow: hidden; font-size: 14px;
-  }
-  .login-wrap { display: flex; align-items: center; justify-content: center; height: 100vh; }
-  .login-box {
-    width: 360px; max-width: 92vw; background: var(--panel);
-    padding: 32px 26px; border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.5);
-    border: 1px solid rgba(255,255,255,.06);
-  }
-  .login-box h2 { text-align: center; margin-bottom: 22px; font-weight: 700; }
-  .login-box .logo {
-    text-align: center; font-size: 42px; margin-bottom: 8px;
-    filter: drop-shadow(0 0 20px var(--accent));
-  }
-  .login-box input {
-    width: 100%; padding: 12px 14px; margin: 6px 0; border-radius: 10px;
-    border: 1px solid var(--panel2); background: var(--bg);
-    color: var(--text); font-family: inherit; font-size: 14px;
-  }
-  .login-box input:focus { outline: none; border-color: var(--accent); }
-  .login-box button {
-    width: 100%; padding: 12px; margin-top: 12px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; border: none; border-radius: 10px; cursor: pointer;
-    font-family: inherit; font-size: 15px; font-weight: 700; transition: .2s;
-  }
-  .login-box button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(99,102,241,.4); }
-  .error { color: var(--danger); font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; }
-  .info-msg { color: var(--success); font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a0a1f;--panel:#2a1230;--panel2:#3d1c45;--line:rgba(255,182,213,.12);
+  --rose:#ff5c93;--rose2:#ff8fb8;--gold:#ffd9a8;--lav:#b79cff;
+  --mine:linear-gradient(135deg,#ff5c93,#d8479f);--theirs:#3a1b44;
+  --text:#fff1f6;--muted:#c9a3b9;--danger:#ff4d6d;--ok:#3ddc97;--warn:#ffb454;
+}
+body{font-family:'Vazirmatn',Tahoma,sans-serif;background:radial-gradient(ellipse at 20% 0%,#3b1346 0%,#1a0a1f 55%,#10050f 100%);
+  color:var(--text);height:100%;min-height:100vh;overflow:hidden;font-size:14px}
+html{height:100%}
+button{font-family:inherit}
+#hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#hearts i{position:absolute;bottom:-40px;font-style:normal;opacity:0;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.5}100%{transform:translateY(-110vh) rotate(40deg);opacity:0}}
 
-  .app { display: none; height: 100vh; }
-  .app.active { display: flex; }
+/* ورود */
+.login-wrap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;height:100vh;padding:16px}
+.login-box{width:370px;max-width:100%;padding:34px 26px;border-radius:26px;text-align:center;
+  background:linear-gradient(160deg,rgba(61,28,69,.85),rgba(42,18,48,.9));backdrop-filter:blur(14px);
+  border:1px solid var(--line);box-shadow:0 24px 70px rgba(255,92,147,.18),0 0 0 1px rgba(255,255,255,.03) inset}
+.login-box .logo{font-size:54px;animation:beat 1.6s ease-in-out infinite;display:inline-block;filter:drop-shadow(0 0 18px var(--rose))}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+.login-box h2{font-weight:800;font-size:22px;margin:6px 0 4px}
+.login-box p{color:var(--muted);font-size:12px;margin-bottom:18px}
+.login-box input{width:100%;padding:13px 15px;margin:6px 0;border-radius:14px;border:1px solid var(--line);
+  background:rgba(16,5,15,.6);color:var(--text);font-family:inherit;font-size:14px;text-align:right}
+.login-box input:focus,.input-row input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,92,147,.2)}
+.login-box .go{width:100%;padding:13px;margin-top:12px;border:none;border-radius:14px;cursor:pointer;color:#fff;
+  background:var(--mine);font-size:15px;font-weight:700;transition:.2s}
+.login-box .go:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(255,92,147,.4)}
+.error{color:var(--danger);font-size:13px;text-align:center;min-height:18px;margin-top:8px}
+.info-msg{color:var(--ok);font-size:13px;text-align:center;min-height:18px;margin-top:8px}
 
-  .sidebar {
-    width: 260px; background: var(--panel); display: flex; flex-direction: column;
-    border-left: 1px solid rgba(255,255,255,.05);
-  }
-  .sidebar-header {
-    padding: 16px; border-bottom: 1px solid rgba(255,255,255,.05);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 16px; flex-shrink: 0;
-  }
-  .sidebar-header .info { flex: 1; overflow: hidden; }
-  .sidebar-header .info b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sidebar-header .info small { color: var(--muted); font-size: 11px; }
-  .users-title { padding: 12px 16px 6px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .5px; }
-  .users-list { flex: 1; overflow-y: auto; padding: 4px 8px; }
-  .user-item {
-    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
-    border-radius: 10px; margin-bottom: 2px; transition: .15s;
-  }
-  .user-item:hover { background: var(--panel2); }
-  .user-item .avatar { width: 34px; height: 34px; font-size: 13px; }
-  .user-item .name { flex: 1; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .user-item .badge { font-size: 10px; padding: 2px 6px; border-radius: 6px; background: var(--accent); color: #fff; }
-  .user-item .badge.admin { background: var(--danger); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-  .dot.online { background: var(--success); box-shadow: 0 0 8px var(--success); }
+/* اپ */
+.app{display:none;height:100vh;position:relative;z-index:1}
+.app.active{display:flex}
+.sidebar{width:270px;background:rgba(42,18,48,.82);backdrop-filter:blur(12px);display:flex;flex-direction:column;border-left:1px solid var(--line);transition:.25s}
+.sidebar-header{padding:16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--lav));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0;color:#fff;box-shadow:0 4px 14px rgba(255,92,147,.35)}
+.sidebar-header .info{flex:1;overflow:hidden}
+.sidebar-header .info b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-header .info small{color:var(--gold);font-size:11px}
+.users-title{padding:14px 16px 6px;color:var(--muted);font-size:12px;font-weight:700}
+.users-list{flex:1;overflow-y:auto;padding:4px 8px}
+.user-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;margin-bottom:2px;transition:.15s}
+.user-item:hover{background:var(--panel2)}
+.user-item .avatar{width:34px;height:34px;font-size:13px}
+.user-item .name{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--danger);color:#fff}
+.dot{width:9px;height:9px;border-radius:50%;background:#6b4a60;flex-shrink:0}
+.dot.online{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.sidebar-footer{padding:10px;border-top:1px solid var(--line)}
+.sidebar-footer button{width:100%;padding:9px;border-radius:12px;background:var(--panel2);color:var(--text);border:none;cursor:pointer;font-size:13px;margin-bottom:6px;transition:.2s}
+.sidebar-footer button:hover{background:#52285c}
+.sidebar-footer .danger{background:rgba(255,77,109,.85)}
 
-  .sidebar-footer { padding: 10px; border-top: 1px solid rgba(255,255,255,.05); }
-  .sidebar-footer button {
-    width: 100%; padding: 9px; border-radius: 8px; background: var(--panel2);
-    color: var(--text); border: none; cursor: pointer; font-family: inherit;
-    font-size: 13px; transition: .2s; margin-bottom: 6px;
-  }
-  .sidebar-footer button:hover { background: #475569; }
-  .sidebar-footer button.danger { background: var(--danger); }
-  .sidebar-footer button.danger:hover { background: #dc2626; }
+.chat{flex:1;display:flex;flex-direction:column;position:relative;min-width:0}
+.chat-header{padding:12px 18px;background:rgba(42,18,48,.75);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.chat-header b{font-size:15px;font-weight:800}
+.chat-header .sub{color:var(--muted);font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#menuBtn{display:none;background:var(--panel2);border:none;color:var(--text);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer}
+.messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth}
+.day{align-self:center;background:rgba(255,182,213,.1);color:var(--gold);font-size:11px;padding:3px 12px;border-radius:12px;margin:8px 0}
+.msg{max-width:68%;padding:8px 13px 6px;border-radius:20px;font-size:14px;line-height:1.7;word-wrap:break-word;animation:pop .22s ease}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
+.msg.mine{background:var(--mine);align-self:flex-start;border-bottom-right-radius:5px;box-shadow:0 6px 18px rgba(255,92,147,.22)}
+.msg.theirs{background:var(--theirs);align-self:flex-end;border-bottom-left-radius:5px;border:1px solid var(--line)}
+.msg .who{display:block;font-size:11px;color:var(--gold);font-weight:700;margin-bottom:1px}
+.msg.mine .who{display:none}
+.msg .time{display:block;font-size:10px;opacity:.7;margin-top:2px;text-align:left;direction:ltr}
+.msg.big{background:transparent;border:none;box-shadow:none;padding:2px 6px}
+.msg.big .st{font-size:64px;line-height:1.15;display:block;animation:wiggle .7s ease}
+.msg.big .time{color:var(--muted);text-align:center}
+@keyframes wiggle{0%{transform:scale(.3) rotate(-20deg)}60%{transform:scale(1.2) rotate(8deg)}100%{transform:none}}
+.msg.txt{background:linear-gradient(135deg,#ff5c93,#b79cff);border:none;padding:10px 18px 6px;text-align:center;font-weight:800;font-size:17px;box-shadow:0 8px 24px rgba(183,156,255,.3)}
+.msg.txt .time{text-align:center}
 
-  .chat { flex: 1; display: flex; flex-direction: column; background: var(--bg); position: relative; }
-  .chat-header {
-    padding: 14px 20px; background: var(--panel);
-    border-bottom: 1px solid rgba(255,255,255,.05);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;
-  }
-  .chat-header b { font-size: 15px; }
-  .messages { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
-  .msg {
-    max-width: 70%; padding: 10px 14px; border-radius: 16px;
-    font-size: 14px; line-height: 1.5; word-wrap: break-word; animation: fadeIn .2s ease;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-  .msg.mine { background: var(--mine); align-self: flex-start; border-bottom-right-radius: 4px; }
-  .msg.theirs { background: var(--theirs); align-self: flex-end; border-bottom-left-radius: 4px; }
-  .msg small { display: block; font-size: 10px; opacity: .75; margin-bottom: 3px; }
-  .msg .sticker { font-size: 42px; line-height: 1; }
+.input-row{display:flex;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));gap:8px;align-items:center;background:rgba(42,18,48,.85);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.round-btn{width:42px;height:42px;border-radius:50%;background:var(--panel2);border:none;cursor:pointer;font-size:21px;transition:.2s;flex-shrink:0}
+.round-btn:hover,.round-btn.on{background:var(--rose);transform:scale(1.08)}
+.input-row input{flex:1;min-width:0;padding:12px 16px;border-radius:26px;border:1px solid var(--line);background:rgba(16,5,15,.6);color:var(--text);font-family:inherit;font-size:14px}
+.send-btn{padding:0 22px;height:42px;border-radius:26px;background:var(--mine);color:#fff;border:none;cursor:pointer;font-weight:700;font-size:14px;transition:.2s}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(255,92,147,.4)}
 
-  .input-row {
-    display: flex; padding: 12px 16px; gap: 8px;
-    background: var(--panel); border-top: 1px solid rgba(255,255,255,.05);
-    align-items: center;
-  }
-  .sticker-btn {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: var(--panel2); border: none; cursor: pointer;
-    font-size: 20px; color: var(--text); transition: .2s; flex-shrink: 0;
-  }
-  .sticker-btn:hover { background: var(--accent); }
-  .input-row input {
-    flex: 1; padding: 11px 14px; border-radius: 24px;
-    border: 1px solid var(--panel2); background: var(--bg);
-    color: var(--text); font-family: inherit; font-size: 14px;
-  }
-  .input-row input:focus { outline: none; border-color: var(--accent); }
-  .send-btn {
-    padding: 11px 22px; border-radius: 24px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; border: none; cursor: pointer;
-    font-family: inherit; font-weight: 700; font-size: 14px; transition: .2s;
-  }
-  .send-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99,102,241,.4); }
+.picker{display:none;position:absolute;bottom:72px;right:12px;left:12px;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 14px 40px rgba(0,0,0,.55);z-index:10;overflow:hidden}
+.picker.open{display:block;animation:pop .18s ease}
+.tabs{display:flex;background:rgba(0,0,0,.2)}
+.tabs button{flex:1;padding:9px 4px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:12px;font-weight:600}
+.tabs button.on{color:#fff;background:var(--panel2)}
+.grid{display:grid;gap:6px;padding:12px;max-height:240px;overflow-y:auto}
+.grid.emo{grid-template-columns:repeat(7,1fr)}
+.grid.stk{grid-template-columns:repeat(4,1fr)}
+.grid.txt{grid-template-columns:repeat(2,1fr)}
+.grid span{cursor:pointer;text-align:center;border-radius:12px;transition:.15s;user-select:none}
+.grid span:hover{background:var(--panel2);transform:scale(1.12)}
+.grid.emo span{font-size:25px;padding:3px}
+.grid.stk span{font-size:40px;padding:4px}
+.grid.txt span{font-size:12.5px;padding:10px 6px;background:rgba(255,92,147,.14);font-weight:600}
 
-  .sticker-picker {
-    display: none; position: absolute; bottom: 76px; right: 16px;
-    background: var(--panel); padding: 12px; border-radius: 14px;
-    border: 1px solid var(--panel2); box-shadow: 0 10px 30px rgba(0,0,0,.5);
-    grid-template-columns: repeat(6, 1fr); gap: 6px; z-index: 10;
-  }
-  .sticker-picker.open { display: grid; }
-  .sticker-picker span {
-    font-size: 24px; cursor: pointer; padding: 4px; border-radius: 8px;
-    text-align: center; transition: .15s;
-  }
-  .sticker-picker span:hover { background: var(--panel2); transform: scale(1.2); }
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(10,2,12,.7);backdrop-filter:blur(5px);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{width:100%;max-width:540px;background:var(--panel);border-radius:22px;padding:22px;max-height:88vh;overflow-y:auto;border:1px solid var(--line)}
+.modal h3{margin-bottom:14px;font-size:17px}
+.modal input{width:100%;padding:10px 12px;margin:5px 0;border-radius:12px;border:1px solid var(--line);background:rgba(16,5,15,.6);color:var(--text);font-family:inherit;font-size:13px}
+.modal-actions{display:flex;gap:8px;margin-top:14px}
+.modal-actions button{flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-weight:600;font-size:13px}
+.btn-primary{background:var(--mine);color:#fff}.btn-secondary{background:var(--panel2);color:var(--text)}
+.admin-user-row{display:flex;align-items:center;gap:8px;padding:10px;background:rgba(16,5,15,.5);border-radius:14px;margin-bottom:8px;flex-wrap:wrap}
+.admin-user-row .info{flex:1;min-width:140px}
+.admin-user-row .info b{display:block;font-size:13px}
+.admin-user-row .info small{color:var(--muted);font-size:11px;display:block}
+.admin-user-row button,.request-item button{padding:6px 10px;font-size:11px;border-radius:9px;border:none;cursor:pointer;color:#fff}
+.mini-danger{background:var(--danger)}.mini-warn{background:var(--warn);color:#2a1230!important}
+.request-box{background:rgba(255,180,84,.1);border:1px solid var(--warn);padding:10px;border-radius:14px;margin-top:10px;font-size:12px}
+.request-item{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--rose);color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;z-index:200;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--panel2);border-radius:6px}
 
-  .modal-bg {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
-    z-index: 100; align-items: center; justify-content: center; padding: 16px;
-  }
-  .modal-bg.open { display: flex; }
-  .modal {
-    width: 100%; max-width: 540px; background: var(--panel);
-    border-radius: 18px; padding: 22px; max-height: 88vh; overflow-y: auto;
-    border: 1px solid var(--panel2);
-  }
-  .modal h3 { margin-bottom: 16px; font-size: 17px; }
-  .modal input, .modal select {
-    width: 100%; padding: 10px 12px; margin: 5px 0; border-radius: 9px;
-    border: 1px solid var(--panel2); background: var(--bg);
-    color: var(--text); font-family: inherit; font-size: 13px;
-  }
-  .modal-actions { display: flex; gap: 8px; margin-top: 14px; }
-  .modal-actions button {
-    flex: 1; padding: 10px; border-radius: 9px; border: none;
-    cursor: pointer; font-family: inherit; font-weight: 600; font-size: 13px;
-  }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-secondary { background: var(--panel2); color: var(--text); }
-  .admin-user-row {
-    display: flex; align-items: center; gap: 8px; padding: 10px;
-    background: var(--bg); border-radius: 10px; margin-bottom: 8px; flex-wrap: wrap;
-  }
-  .admin-user-row .info { flex: 1; min-width: 140px; }
-  .admin-user-row .info b { display: block; font-size: 13px; }
-  .admin-user-row .info small { color: var(--muted); font-size: 11px; display: block; }
-  .admin-user-row button {
-    padding: 6px 10px; font-size: 11px; border-radius: 7px;
-    border: none; cursor: pointer; font-family: inherit; color: #fff;
-  }
-  .btn-mini-danger { background: var(--danger); }
-  .btn-mini-secondary { background: var(--accent); }
-  .btn-mini-warn { background: var(--warn); }
-
-  .request-box {
-    background: rgba(245,158,11,.1); border: 1px solid var(--warn);
-    padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 12px;
-  }
-  .request-box b { color: var(--warn); }
-  .request-item {
-    display: flex; justify-content: space-between; gap: 8px;
-    padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 12px;
-  }
-  .last-seen { font-size: 11px; color: var(--muted); }
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--success); color: #fff; padding: 10px 20px;
-    border-radius: 10px; font-size: 13px; z-index: 200;
-    opacity: 0; transition: .3s; pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
-
-  @media (max-width: 700px) {
-    .sidebar { width: 180px; }
-    .msg { max-width: 88%; }
-    .sidebar-header .info small { display: none; }
-  }
+@media(max-width:700px){
+  .sidebar{position:fixed;inset:0 0 0 auto;width:78%;max-width:280px;z-index:50;transform:translateX(100%)}
+  .sidebar.open{transform:none;box-shadow:-10px 0 40px rgba(0,0,0,.6)}
+  #menuBtn{display:block}
+  .msg{max-width:86%}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
+<div id="hearts"></div>
 
-  <!-- صفحه ورود -->
-  <div class="login-wrap" id="loginWrap">
-    <div class="login-box">
-      <div class="logo">💬</div>
-      <h2>ورود به چت</h2>
-      <input type="email" id="email" placeholder="ایمیل" />
-      <input type="password" id="password" placeholder="پسورد" />
-      <button onclick="login()">ورود</button>
-      <div class="error" id="loginError"></div>
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="logo">💖</div>
+    <h2>خوش اومدی عزیزم</h2>
+    <p>جایی برای دل‌نوشته‌های ما دو نفر</p>
+    <input type="email" id="email" placeholder="ایمیل" autocomplete="username" />
+    <input type="password" id="password" placeholder="پسورد" autocomplete="current-password" />
+    <button class="go" onclick="login()">ورود 💌</button>
+    <div class="error" id="loginError"></div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="avatar" id="myAvatar">?</div>
+      <div class="info"><b id="myEmail"></b><small id="myStatus">آماده 💫</small></div>
     </div>
-  </div>
-
-  <!-- اپ -->
-  <div class="app" id="app">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="avatar" id="myAvatar">?</div>
-        <div class="info">
-          <b id="myEmail"></b>
-          <small id="myStatus">آماده</small>
-        </div>
-      </div>
-      <div class="users-title">کاربران</div>
-      <div class="users-list" id="usersList"></div>
-      <div class="sidebar-footer">
-        <button id="adminBtn" style="display:none;" onclick="openAdmin()">⚙️ مدیریت کاربران</button>
-        <button class="danger" onclick="logout()">خروج</button>
-      </div>
-    </aside>
-
-    <main class="chat">
-      <div class="chat-header">
-        <b>گفتگوی گروهی</b>
-        <span class="last-seen" id="headerLastSeen"></span>
-      </div>
-      <div class="messages" id="messages"></div>
-      <form class="input-row" onsubmit="sendMessage(event)">
-        <button type="button" class="sticker-btn" onclick="toggleStickers()">😀</button>
-        <input id="newMessage" placeholder="پیامت را بنویس..." autocomplete="off" />
-        <button type="submit" class="send-btn">ارسال</button>
-      </form>
-      <div class="sticker-picker" id="stickerPicker"></div>
-    </main>
-  </div>
-
-  <!-- مودال ادمین -->
-  <div class="modal-bg" id="adminModal">
-    <div class="modal">
-      <h3>⚙️ مدیریت کاربران</h3>
-      <div id="adminUsersList">در حال بارگذاری...</div>
-
-      <hr style="border-color:var(--panel2); margin:16px 0;" />
-
-      <h3 style="font-size:15px;">➕ درخواست افزودن کاربر جدید</h3>
-      <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">
-        چون دسترسی مستقیم به ساخت کاربر نداریم، درخواست شما ثبت می‌شود.
-        سپس از پنل Supabase → Authentication → Users آن را بسازید.
-      </p>
-      <input id="newEmail" placeholder="ایمیل" />
-      <input id="newPass" placeholder="پسورد پیشنهادی" />
-      <input id="newName" placeholder="نام نمایشی (اختیاری)" />
-      <div class="modal-actions">
-        <button class="btn-primary" onclick="requestCreateUser()">ثبت درخواست</button>
-        <button class="btn-secondary" onclick="closeAdmin()">بستن</button>
-      </div>
-      <div class="error" id="adminError"></div>
-      <div class="info-msg" id="adminInfo"></div>
-
-      <div class="request-box">
-        <b>📋 درخواست‌های در انتظار</b>
-        <div id="requestsList" style="margin-top:8px;"></div>
-      </div>
+    <div class="users-title">💞 کاربران</div>
+    <div class="users-list" id="usersList"></div>
+    <div class="sidebar-footer">
+      <button id="adminBtn" style="display:none" onclick="openAdmin()">⚙️ مدیریت کاربران</button>
+      <button class="danger" onclick="logout()">خروج</button>
     </div>
-  </div>
+  </aside>
 
-  <div class="toast" id="toast"></div>
+  <main class="chat">
+    <div class="chat-header">
+      <button id="menuBtn" onclick="document.getElementById('sidebar').classList.toggle('open')">👥</button>
+      <b>💕 گفتگوی ما</b>
+      <span class="sub" id="headerLastSeen"></span>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="picker" id="picker">
+      <div class="tabs" id="tabs"></div>
+      <div class="grid" id="pickerGrid"></div>
+    </div>
+    <form class="input-row" onsubmit="sendMessage(event)">
+      <button type="button" class="round-btn" id="pickBtn" onclick="togglePicker()">😍</button>
+      <input id="newMessage" placeholder="یه چیز قشنگ بنویس..." autocomplete="off" />
+      <button type="submit" class="send-btn">ارسال 💌</button>
+    </form>
+  </main>
+</div>
+
+<div class="modal-bg" id="adminModal">
+  <div class="modal">
+    <h3>⚙️ مدیریت کاربران</h3>
+    <div id="adminUsersList">در حال بارگذاری...</div>
+    <hr style="border-color:var(--line);margin:16px 0" />
+    <h3 style="font-size:15px">➕ درخواست افزودن کاربر جدید</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px">درخواست ثبت می‌شود؛ سپس از Supabase ← Authentication ← Users کاربر را بسازید.</p>
+    <input id="newEmail" placeholder="ایمیل" />
+    <input id="newPass" placeholder="پسورد پیشنهادی" />
+    <input id="newName" placeholder="نام نمایشی (اختیاری)" />
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="requestCreateUser()">ثبت درخواست</button>
+      <button class="btn-secondary" onclick="closeAdmin()">بستن</button>
+    </div>
+    <div class="error" id="adminError"></div>
+    <div class="info-msg" id="adminInfo"></div>
+    <div class="request-box"><b>📋 درخواست‌های در انتظار</b><div id="requestsList" style="margin-top:8px"></div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-  // ⚙️ مقادیر خودت
-  const SUPABASE_URL = "https://kcqphtmuxzaqcqocxgtc.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_aQmfb0-Eu0LnF2nIYx7rew_FwiQl_Wk";
+const SUPABASE_URL = "https://kcqphtmuxzaqcqocxgtc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_aQmfb0-Eu0LnF2nIYx7rew_FwiQl_Wk";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser=null, currentProfile=null, channel=null, usersChannel=null, profilesMap={}, lastDay="", profTimer=null;
+const $ = id => document.getElementById(id);
 
-  let currentUser = null;
-  let currentProfile = null;
-  let channel = null;
-  let usersChannel = null;
-  let profilesMap = {};
+/* ---------- ایموجی و استیکر ---------- */
+const EMOJIS = ['😍','🥰','😘','😚','💋','😊','☺️','😉','🥺','😭','😂','🤭','😳','😏','🤗','😌','😴','🥳','😎','🤩','😇','😜','🙈','🙊','❤️','🧡','💛','💚','💙','💜','🤍','🖤','💖','💗','💓','💞','💕','💘','💝','💟','❣️','💌','🌹','🌷','🌸','🌺','💐','🦋','✨','🌙','⭐','🌈','🔥','🎉','🎁','🍫','🍓','🍒','☕','🍕','👍','🙏','🤝','🫶','👋','💯','🥂','🧸'];
+const STICKER_PACKS = {
+  '💑 عاشقانه': ['💑','👩‍❤️‍👨','💏','🥰','😍','😘','💞','💘','💝','💖','💌','💍','🌹','🫶','💋','👩‍❤️‍💋‍👨'],
+  '🧸 ناز': ['🧸','🐻','🐰','🐱','🐶','🦊','🐼','🐨','🦄','🐥','🐧','🐹','🦋','🐝','🐞','🍓'],
+  '🌙 رویایی': ['🌙','⭐','🌟','💫','✨','🌈','☁️','🌸','🌷','🌺','💐','🌻','🎀','🕯️','🍷','🎶']
+};
+const TEXT_STICKERS = ['دوستت دارم ❤️','دلم برات تنگ شده 🥺','عاشقتم 😍','تو همه‌ی دنیای منی 🌎','قربونت برم 😘','شب بخیر عشقم 🌙','صبح بخیر قشنگم ☀️','یه بغل بزرگ برات 🤗','فدات بشم 💕','بوس بوس 💋','مراقب خودت باش 🫶','تو بهترینی ✨'];
+const PREFIX = '§S§', TPREFIX = '§T§';
+let curTab = 'emoji';
 
-  const STICKERS = ['😀','😂','🥰','😍','🤔','😎','😢','😡','👍','👎','❤️','🔥','🎉','🙏','👋','💯','😴','🤗','😱','🥳','😇','🤩','😜','🤝','✨','💔','🌈','🍕','☕','⚽'];
-
-  window.addEventListener("DOMContentLoaded", async () => {
-    const picker = document.getElementById("stickerPicker");
-    STICKERS.forEach(s => {
-      const el = document.createElement("span");
-      el.textContent = s;
-      el.onclick = () => sendSticker(s);
-      picker.appendChild(el);
-    });
-    const { data: { session } } = await db.auth.getSession();
-    if (session) startApp(session.user);
+function buildTabs(){
+  const tabs = $('tabs'); tabs.innerHTML = '';
+  const items = [['emoji','😊 ایموجی'], ...Object.keys(STICKER_PACKS).map(k=>[k,k]), ['text','💬 جمله']];
+  items.forEach(([key,label])=>{
+    const b = document.createElement('button'); b.type='button'; b.textContent=label;
+    if(key===curTab) b.className='on';
+    b.onclick = ()=>{ curTab=key; buildTabs(); buildGrid(); };
+    tabs.appendChild(b);
   });
-
-  function toast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2200);
+}
+function buildGrid(){
+  const g = $('pickerGrid'); g.innerHTML='';
+  if(curTab==='emoji'){
+    g.className='grid emo';
+    EMOJIS.forEach(e=>{ const s=document.createElement('span'); s.textContent=e; s.onclick=()=>{ const i=$('newMessage'); i.value+=e; i.focus(); }; g.appendChild(s); });
+  } else if(curTab==='text'){
+    g.className='grid txt';
+    TEXT_STICKERS.forEach(t=>{ const s=document.createElement('span'); s.textContent=t; s.onclick=()=>send(TPREFIX+t); g.appendChild(s); });
+  } else {
+    g.className='grid stk';
+    STICKER_PACKS[curTab].forEach(e=>{ const s=document.createElement('span'); s.textContent=e; s.onclick=()=>send(PREFIX+e); g.appendChild(s); });
   }
+}
+function togglePicker(force){
+  const p=$('picker'), open = force===undefined ? !p.classList.contains('open') : force;
+  p.classList.toggle('open', open); $('pickBtn').classList.toggle('on', open);
+}
 
-  async function login() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const errEl = document.getElementById("loginError");
-    errEl.textContent = "";
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
-    if (error) { errEl.textContent = "خطا: " + error.message; return; }
-    startApp(data.user);
+/* ---------- قلب‌های شناور ---------- */
+function spawnHearts(){
+  const box=$('hearts'), set=['💗','💕','💖','✨','🌸','💞'];
+  for(let i=0;i<14;i++){
+    const h=document.createElement('i'); h.textContent=set[i%set.length];
+    h.style.left=Math.random()*100+'%'; h.style.fontSize=(14+Math.random()*18)+'px';
+    h.style.animationDuration=(12+Math.random()*14)+'s'; h.style.animationDelay=(-Math.random()*20)+'s';
+    box.appendChild(h);
   }
+}
 
-  async function logout() {
-    await updateLastSeen();
-    if (channel) await db.removeChannel(channel);
-    if (usersChannel) await db.removeChannel(usersChannel);
-    await db.auth.signOut();
-    location.reload();
+/* ---------- شروع ---------- */
+window.addEventListener('DOMContentLoaded', async ()=>{
+  spawnHearts(); buildTabs(); buildGrid();
+  $('password').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
+  const { data:{ session } } = await db.auth.getSession();
+  if(session) startApp(session.user);
+});
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+async function login(){
+  const email=$('email').value.trim(), password=$('password').value, err=$('loginError');
+  err.textContent='';
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
+  if(error){ err.textContent='خطا: '+error.message; return; }
+  startApp(data.user);
+}
+async function logout(){
+  await updateLastSeen();
+  if(channel) await db.removeChannel(channel);
+  if(usersChannel) await db.removeChannel(usersChannel);
+  await db.auth.signOut(); location.reload();
+}
+
+async function startApp(user){
+  currentUser=user;
+  $('loginWrap').style.display='none'; $('app').classList.add('active');
+  $('myEmail').textContent=user.email; $('myAvatar').textContent=(user.email[0]||'?').toUpperCase();
+  const { data:prof } = await db.from('profiles').select('*').eq('id',user.id).single();
+  currentProfile=prof;
+  if(prof?.role==='admin'){ $('adminBtn').style.display='block'; $('myStatus').textContent='🛡️ ادمین'; }
+  await loadProfiles(); await loadMessages(); subscribeRealtime(); startPresenceTimer();
+}
+
+async function updateLastSeen(){
+  if(!currentUser) return;
+  await db.from('profiles').update({ last_seen:new Date().toISOString() }).eq('id',currentUser.id);
+}
+function startPresenceTimer(){
+  updateLastSeen(); setInterval(updateLastSeen,30000);
+  window.addEventListener('beforeunload',()=>updateLastSeen());
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) updateLastSeen(); });
+  setInterval(()=>renderUsersList(Object.values(profilesMap)),30000);
+}
+
+/* ---------- پروفایل‌ها ---------- */
+async function loadProfiles(){
+  const { data } = await db.from('profiles').select('*').order('created_at');
+  profilesMap={}; (data||[]).forEach(p=>profilesMap[p.id]=p);
+  renderUsersList(data||[]); updateHeaderLastSeen();
+}
+function renderUsersList(profiles){
+  const list=$('usersList'); list.innerHTML='';
+  profiles.forEach(p=>{
+    const div=document.createElement('div'); div.className='user-item';
+    const initial=(p.display_name||p.email||'?')[0].toUpperCase();
+    const online=p.last_seen && (Date.now()-new Date(p.last_seen).getTime()<60000);
+    div.innerHTML=`<div class="avatar">${escapeHtml(initial)}</div><div class="name">${escapeHtml(p.display_name||p.email)}</div>${p.role==='admin'?'<span class="badge">ادمین</span>':''}<div class="dot ${online?'online':''}"></div>`;
+    list.appendChild(div);
+  });
+}
+function updateHeaderLastSeen(){
+  const el=$('headerLastSeen');
+  if(currentProfile?.role!=='admin'){ el.textContent=''; return; }
+  el.textContent=Object.values(profilesMap).filter(p=>p.id!==currentUser.id)
+    .map(p=>`${p.email}: ${p.last_seen?new Date(p.last_seen).toLocaleString('fa-IR'):'نامشخص'}`).join(' | ');
+}
+
+/* ---------- پیام‌ها ---------- */
+async function loadMessages(){
+  const { data } = await db.from('messages').select('*').order('created_at');
+  $('messages').innerHTML=''; lastDay='';
+  (data||[]).forEach(renderMessage); scrollBottom(true);
+}
+function subscribeRealtime(){
+  channel=db.channel('messages-rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{ renderMessage(p.new); scrollBottom(); })
+    .subscribe();
+  usersChannel=db.channel('profiles-rt')
+    .on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>{
+      clearTimeout(profTimer); profTimer=setTimeout(loadProfiles,800);
+    }).subscribe();
+}
+function renderMessage(m){
+  const box=$('messages'), d=new Date(m.created_at||Date.now());
+  const dayKey=d.toDateString();
+  if(dayKey!==lastDay){
+    lastDay=dayKey;
+    const sep=document.createElement('div'); sep.className='day';
+    sep.textContent=d.toLocaleDateString('fa-IR',{weekday:'long',day:'numeric',month:'long'});
+    box.appendChild(sep);
   }
+  const time=d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+  const mine=m.user_id===currentUser.id;
+  const sender=profilesMap[m.user_id]?.display_name||m.username||'';
+  const c=String(m.content||'');
+  const div=document.createElement('div');
+  let body, cls='';
+  if(c.startsWith(PREFIX)){ cls=' big'; body=`<span class="st">${escapeHtml(c.slice(PREFIX.length))}</span>`; }
+  else if(c.startsWith(TPREFIX)){ cls=' txt'; body=escapeHtml(c.slice(TPREFIX.length)); }
+  else if(/^[\p{Extended_Pictographic}\u200d\ufe0f\s]+$/u.test(c) && [...c].length<=6){ cls=' big'; body=`<span class="st">${escapeHtml(c)}</span>`; }
+  else body=escapeHtml(c);
+  div.className='msg '+(mine?'mine':'theirs')+cls;
+  div.innerHTML=`${mine?'':`<span class="who">${escapeHtml(sender)}</span>`}${body}<span class="time">${time}</span>`;
+  box.appendChild(div);
+}
+async function send(content){
+  const { error } = await db.from('messages').insert({
+    user_id:currentUser.id, username:currentProfile?.display_name||currentUser.email, content
+  });
+  if(error) toast('خطا: '+error.message);
+}
+async function sendMessage(e){
+  e.preventDefault();
+  const input=$('newMessage'), text=input.value.trim();
+  if(!text) return;
+  input.value=''; togglePicker(false);
+  await send(text);
+}
+function scrollBottom(instant){
+  const c=$('messages');
+  if(instant){ c.style.scrollBehavior='auto'; c.scrollTop=c.scrollHeight; c.style.scrollBehavior=''; }
+  else c.scrollTop=c.scrollHeight;
+}
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
-  async function startApp(user) {
-    currentUser = user;
-    document.getElementById("loginWrap").style.display = "none";
-    document.getElementById("app").classList.add("active");
-    document.getElementById("myEmail").textContent = user.email;
-    document.getElementById("myAvatar").textContent = (user.email[0] || "?").toUpperCase();
+/* ---------- ادمین ---------- */
+function openAdmin(){ $('adminModal').classList.add('open'); loadAdminUsers(); loadRequests(); }
+function closeAdmin(){ $('adminModal').classList.remove('open'); $('adminError').textContent=''; $('adminInfo').textContent=''; }
 
-    const { data: prof } = await db.from("profiles").select("*").eq("id", user.id).single();
-    currentProfile = prof;
-    if (prof?.role === "admin") {
-      document.getElementById("adminBtn").style.display = "block";
-      document.getElementById("myStatus").textContent = "🛡️ ادمین";
-    }
-
-    await loadProfiles();
-    await loadMessages();
-    subscribeRealtime();
-    startPresenceTimer();
-  }
-
-  async function updateLastSeen() {
-    if (!currentUser) return;
-    await db.from("profiles")
-      .update({ last_seen: new Date().toISOString() })
-      .eq("id", currentUser.id);
-  }
-
-  function startPresenceTimer() {
-    updateLastSeen();
-    setInterval(updateLastSeen, 30000);
-    window.addEventListener("beforeunload", () => updateLastSeen());
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) updateLastSeen();
-    });
-  }
-
-  async function loadProfiles() {
-    const { data } = await db.from("profiles").select("*").order("created_at");
-    profilesMap = {};
-    (data || []).forEach(p => profilesMap[p.id] = p);
-    renderUsersList(data || []);
-    updateHeaderLastSeen();
-  }
-
-  function renderUsersList(profiles) {
-    const list = document.getElementById("usersList");
-    list.innerHTML = "";
-    profiles.forEach(p => {
-      const div = document.createElement("div");
-      div.className = "user-item";
-      const initial = (p.display_name || p.email || "?")[0].toUpperCase();
-      const isOnline = p.last_seen && (Date.now() - new Date(p.last_seen).getTime() < 60000);
-      div.innerHTML = `
-        <div class="avatar">${initial}</div>
-        <div class="name">${escapeHtml(p.display_name || p.email)}</div>
-        ${p.role === 'admin' ? '<span class="badge admin">ادمین</span>' : ''}
-        <div class="dot ${isOnline ? 'online' : ''}"></div>
-      `;
-      list.appendChild(div);
-    });
-  }
-
-  function updateHeaderLastSeen() {
-    if (currentProfile?.role !== 'admin') {
-      document.getElementById("headerLastSeen").textContent = "";
-      return;
-    }
-    const parts = [];
-    Object.values(profilesMap).forEach(p => {
-      if (p.id === currentUser.id) return;
-      const seen = p.last_seen ? new Date(p.last_seen).toLocaleString('fa-IR') : 'نامشخص';
-      parts.push(`${p.email}: ${seen}`);
-    });
-    document.getElementById("headerLastSeen").textContent = parts.join(' | ');
-  }
-
-  async function loadMessages() {
-    const { data } = await db.from("messages").select("*").order("created_at");
-    const box = document.getElementById("messages");
-    box.innerHTML = "";
-    (data || []).forEach(renderMessage);
-    scrollBottom();
-  }
-
-  function subscribeRealtime() {
-    channel = db.channel("messages-rt")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => { renderMessage(payload.new); scrollBottom(); })
-      .subscribe();
-
-    usersChannel = db.channel("profiles-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" },
-        async () => { await loadProfiles(); })
-      .subscribe();
-  }
-
-   function renderMessage(m) {
-    const box = document.getElementById("messages");
-    const div = document.createElement("div");
-    div.className = "msg " + (m.user_id === currentUser.id ? "mine" : "theirs");
-    const sender = profilesMap[m.user_id]?.display_name || m.username;
-    // اگر محتوا فقط شامل اموجی/استیکر بود (بدون متن)، بزرگ نشان بده
-    const onlyEmoji = /^[\p{Emoji}\s]+$/u.test(m.content) && m.content.length <= 8;
-    if (onlyEmoji) {
-      div.innerHTML = `<small>${escapeHtml(sender)}</small><div class="sticker">${escapeHtml(m.content)}</div>`;
-    } else {
-      div.innerHTML = `<small>${escapeHtml(sender)}</small>${escapeHtml(m.content)}`;
-    }
+async function loadAdminUsers(){
+  const box=$('adminUsersList'); box.innerHTML='در حال بارگذاری...';
+  const { data, error } = await db.from('profiles').select('*').order('created_at');
+  if(error){ box.innerHTML=`<div class="error">${escapeHtml(error.message)}</div>`; return; }
+  box.innerHTML='';
+  (data||[]).forEach(u=>{
+    const seen=u.last_seen?new Date(u.last_seen).toLocaleString('fa-IR'):'هرگز';
+    const row=document.createElement('div'); row.className='admin-user-row';
+    row.innerHTML=`<div class="info"><b>${escapeHtml(u.email)}</b><small>آخرین بازدید: ${seen}</small>${u.role==='admin'?'<small style="color:var(--danger)">🛡️ ادمین</small>':''}</div>
+      <button class="mini-warn">${u.role==='admin'?'حذف ادمین':'ادمین کن'}</button>
+      <button class="mini-danger">حذف از لیست</button>`;
+    const [b1,b2]=row.querySelectorAll('button');
+    b1.onclick=()=>toggleRole(u.id,u.role);
+    b2.onclick=()=>removeProfile(u.id,u.email);
+    box.appendChild(row);
+  });
+}
+async function removeProfile(id,email){
+  if(!confirm(`کاربر ${email} از لیست پروفایل حذف شود؟\n(اکانت اصلی در Supabase باقی می‌ماند)`)) return;
+  const { error } = await db.from('profiles').delete().eq('id',id);
+  if(error){ alert(error.message); return; }
+  toast('از لیست حذف شد'); await loadAdminUsers(); await loadProfiles();
+}
+async function toggleRole(id,role){
+  const newRole=role==='admin'?'user':'admin';
+  const { error } = await db.from('profiles').update({ role:newRole }).eq('id',id);
+  if(error){ alert(error.message); return; }
+  toast(newRole==='admin'?'ادمین شد ✅':'به کاربر عادی تغییر کرد');
+  await loadAdminUsers(); await loadProfiles();
+}
+async function requestCreateUser(){
+  const email=$('newEmail').value.trim(), password=$('newPass').value;
+  const err=$('adminError'), info=$('adminInfo'); err.textContent=''; info.textContent='';
+  if(!email||!password){ err.textContent='ایمیل و پسورد الزامی است'; return; }
+  const { error } = await db.from('user_requests').insert({
+    requested_by:currentUser.id, action:'create', target_email:email, new_password:password
+  });
+  if(error){ err.textContent=error.message; return; }
+  info.textContent='درخواست ثبت شد ✅';
+  ['newEmail','newPass','newName'].forEach(i=>$(i).value='');
+  await loadRequests();
+}
+async function loadRequests(){
+  const box=$('requestsList');
+  const { data } = await db.from('user_requests').select('*').eq('status','pending').order('created_at',{ascending:false});
+  if(!data||!data.length){ box.innerHTML='<div style="color:var(--muted);font-size:12px">درخواستی نیست</div>'; return; }
+  box.innerHTML='';
+  data.forEach(r=>{
+    const div=document.createElement('div'); div.className='request-item';
+    div.innerHTML=`<span>${escapeHtml(r.target_email)} <small style="color:var(--muted)">(پسورد: ${escapeHtml(r.new_password||'-')})</small></span><button class="mini-danger">انجام شد</button>`;
+    div.querySelector('button').onclick=async()=>{ await db.from('user_requests').update({status:'done'}).eq('id',r.id); loadRequests(); };
     box.appendChild(div);
-  }
-
-  async function sendMessage(e) {
-    e.preventDefault();
-    const input = document.getElementById("newMessage");
-    const text = input.value.trim();
-    if (!text) return;
-    input.value = "";
-        const { error } = await db.from("messages").insert({
-      user_id: currentUser.id,
-      username: currentProfile?.display_name || currentUser.email,
-      content: text
-    });
-    if (error) toast("خطا: " + error.message);
-  }
-
-  async function sendSticker(sticker) {
-    toggleStickers(false);
-    const { error } = await db.from("messages").insert({
-      user_id: currentUser.id,
-      username: currentProfile?.display_name || currentUser.email,
-      content: sticker
-    });
-    if (error) toast("خطا: " + error.message);
-  }
-
-  function toggleStickers(force) {
-    const p = document.getElementById("stickerPicker");
-    if (force === false) p.classList.remove("open");
-    else p.classList.toggle("open");
-  }
-
-  function scrollBottom() {
-    const c = document.getElementById("messages");
-    c.scrollTop = c.scrollHeight;
-  }
-
-  function escapeHtml(str) {
-    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-  }
-
-  // ============ ادمین ============
-  function openAdmin() {
-    document.getElementById("adminModal").classList.add("open");
-    loadAdminUsers();
-    loadRequests();
-  }
-  function closeAdmin() {
-    document.getElementById("adminModal").classList.remove("open");
-    document.getElementById("adminError").textContent = "";
-    document.getElementById("adminInfo").textContent = "";
-  }
-
-  async function loadAdminUsers() {
-    const box = document.getElementById("adminUsersList");
-    box.innerHTML = "در حال بارگذاری...";
-    const { data, error } = await db.from("profiles").select("*").order("created_at");
-    if (error) { box.innerHTML = `<div class="error">${error.message}</div>`; return; }
-    box.innerHTML = "";
-    (data || []).forEach(u => {
-      const lastSeen = u.last_seen ? new Date(u.last_seen).toLocaleString('fa-IR') : 'هرگز';
-      const row = document.createElement("div");
-      row.className = "admin-user-row";
-      row.innerHTML = `
-        <div class="info">
-          <b>${escapeHtml(u.email)}</b>
-          <small>آخرین بازدید: ${lastSeen}</small>
-          ${u.role === 'admin' ? '<small style="color:var(--danger)">🛡️ ادمین</small>' : ''}
-        </div>
-        <button class="btn-mini-warn" onclick="toggleRole('${u.id}','${u.role}')">${u.role === 'admin' ? 'حذف ادمین' : 'ادمین کن'}</button>
-        <button class="btn-mini-danger" onclick="removeProfile('${u.id}','${u.email}')">حذف از لیست</button>
-      `;
-      box.appendChild(row);
-    });
-  }
-
-  async function removeProfile(id, email) {
-    if (!confirm(`کاربر ${email} از لیست پروفایل حذف شود؟\n(اکانت اصلی در Supabase باقی می‌ماند)`)) return;
-    const { error } = await db.from("profiles").delete().eq("id", id);
-    if (error) { alert(error.message); return; }
-    toast("از لیست حذف شد");
-    await loadAdminUsers();
-    await loadProfiles();
-  }
-
-  async function toggleRole(id, currentRole) {
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    const { error } = await db.from("profiles").update({ role: newRole }).eq("id", id);
-    if (error) { alert(error.message); return; }
-    toast(newRole === 'admin' ? "ادمین شد ✅" : "به کاربر عادی تغییر کرد");
-    await loadAdminUsers();
-    await loadProfiles();
-  }
-
-  async function requestCreateUser() {
-    const email = document.getElementById("newEmail").value.trim();
-    const password = document.getElementById("newPass").value;
-    const name = document.getElementById("newName").value.trim();
-    const errEl = document.getElementById("adminError");
-    const infoEl = document.getElementById("adminInfo");
-    errEl.textContent = ""; infoEl.textContent = "";
-    if (!email || !password) { errEl.textContent = "ایمیل و پسورد الزامی است"; return; }
-
-    const { error } = await db.from("user_requests").insert({
-      requested_by: currentUser.id,
-      action: 'create',
-      target_email: email,
-      new_password: password
-    });
-    if (error) { errEl.textContent = error.message; return; }
-
-    infoEl.textContent = "درخواست ثبت شد ✅";
-    document.getElementById("newEmail").value = "";
-    document.getElementById("newPass").value = "";
-    document.getElementById("newName").value = "";
-    await loadRequests();
-  }
-
-  async function loadRequests() {
-    const box = document.getElementById("requestsList");
-    const { data } = await db.from("user_requests")
-      .select("*").eq("status", "pending").order("created_at", { ascending: false });
-    if (!data || data.length === 0) {
-      box.innerHTML = '<div style="color:var(--muted); font-size:12px;">درخواستی نیست</div>';
-      return;
-    }
-    box.innerHTML = "";
-    data.forEach(r => {
-      const div = document.createElement("div");
-      div.className = "request-item";
-      div.innerHTML = `
-        <span>${escapeHtml(r.target_email)} <small style="color:var(--muted)">(پسورد: ${escapeHtml(r.new_password || '-')})</small></span>
-        <button class="btn-mini-danger" style="padding:3px 8px; font-size:10px;" onclick="markDone(${r.id})">انجام شد</button>
-      `;
-      box.appendChild(div);
-    });
-  }
-
-  async function markDone(id) {
-    await db.from("user_requests").update({ status: "done" }).eq("id", id);
-    await loadRequests();
-  }
+  });
+}
 </script>
 </body>
 </html>
