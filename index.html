@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>چت دو نفره</title>
+<title>ورود</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -459,21 +459,22 @@
     const text = input.value.trim();
     if (!text) return;
     input.value = "";
-    const { error } = await db.from("messages").insert({
+        const { error } = await db.from("messages").insert({
       user_id: currentUser.id,
       username: currentProfile?.display_name || currentUser.email,
-      content: text, type: "text"
+      content: text
     });
     if (error) toast("خطا: " + error.message);
   }
 
   async function sendSticker(sticker) {
     toggleStickers(false);
-    await db.from("messages").insert({
+    const { error } = await db.from("messages").insert({
       user_id: currentUser.id,
       username: currentProfile?.display_name || currentUser.email,
-      content: sticker, type: "sticker"
+      content: sticker
     });
+    if (error) toast("خطا: " + error.message);
   }
 
   function toggleStickers(force) {
